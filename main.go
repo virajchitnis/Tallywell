@@ -1,20 +1,29 @@
 // Command tallywell runs the local web app: it binds to loopback only, opens
-// the default browser, and serves the UI. All logic lives in internal/*; this
-// file is thin wiring.
+// the default browser, shows a system-tray icon, and serves the UI until the
+// user clicks Quit in the tray. All logic lives in internal/*; this file is
+// thin wiring.
+//
+// Set TALLYWELL_NO_TRAY=1 to skip the system-tray icon and run in terminal
+// mode instead (useful for headless environments and integration tests).
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"runtime"
+	"syscall"
+	"time"
 
 	"github.com/tallywell/tallywell/internal/app"
 	"github.com/tallywell/tallywell/internal/server"
+	"github.com/tallywell/tallywell/internal/tray"
 )
 
 func main() {
@@ -38,11 +47,35 @@ func main() {
 	}
 	url := fmt.Sprintf("http://%s/", ln.Addr().String())
 	fmt.Printf("Tallywell is running at %s\n", url)
+
+	// Serve in a goroutine so the main goroutine is free for the tray (macOS
+	// requires Cocoa UI on the main thread).
+	httpSrv := &http.Server{Handler: srv.Handler()}
+	go func() {
+		if err := httpSrv.Serve(ln); err != nil && err != http.ErrServerClosed {
+			log.Printf("tallywell: serve: %v", err)
+		}
+	}()
+
+	shutdown := func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = httpSrv.Shutdown(ctx)
+	}
+
 	openBrowser(url)
 
-	if err := http.Serve(ln, srv.Handler()); err != nil {
-		log.Fatalf("tallywell: serve: %v", err)
+	if os.Getenv("TALLYWELL_NO_TRAY") == "1" {
+		// Terminal / headless mode: run until Ctrl-C or SIGTERM.
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
+		<-ch
+		shutdown()
+		return
 	}
+
+	// tray.Run blocks until the user clicks Quit in the menu-bar icon.
+	tray.Run(url, openBrowser, shutdown)
 }
 
 // dataDir returns the per-user local data directory for Tallywell. On macOS
