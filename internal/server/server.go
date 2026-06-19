@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"embed"
 	"html/template"
+	"io/fs"
 	"net/http"
 	"sync"
 	"time"
@@ -61,7 +62,10 @@ func (s *Server) Handler() http.Handler { return s.mux }
 
 func (s *Server) routes() {
 	s.mux = http.NewServeMux()
-	s.mux.Handle("GET /static/", http.FileServer(http.FS(webFS)))
+	// Serve embedded assets rooted at web/ so /static/app.css maps to
+	// web/static/app.css.
+	staticFS, _ := fs.Sub(webFS, "web")
+	s.mux.Handle("GET /static/", http.FileServer(http.FS(staticFS)))
 
 	s.mux.HandleFunc("GET /setup", s.handleSetupForm)
 	s.mux.HandleFunc("POST /setup", s.handleSetup)

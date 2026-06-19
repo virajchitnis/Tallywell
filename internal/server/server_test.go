@@ -147,6 +147,18 @@ func TestFullFlowAddDataAndExport(t *testing.T) {
 	resp.Body.Close()
 }
 
+func TestStaticAssetServed(t *testing.T) {
+	e := newTestEnv(t)
+	resp := e.get(t, "/static/app.css")
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("static css status = %d, want 200", resp.StatusCode)
+	}
+	if ct := resp.Header.Get("Content-Type"); !strings.Contains(ct, "css") {
+		t.Errorf("static css content-type = %q", ct)
+	}
+}
+
 func TestLockBlocksAccess(t *testing.T) {
 	e := newTestEnv(t)
 	e.post(t, "/setup", url.Values{"passphrase": {"hunter2hunter2"}, "confirm": {"hunter2hunter2"}})
