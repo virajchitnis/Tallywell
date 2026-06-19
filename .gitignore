@@ -1,0 +1,34 @@
+# Build output
+/dist/
+/build/
+*.exe
+
+# Local runtime data (PHI — never commit)
+*.tallywell.enc
+tracker.db
+tracker.db.enc
+*.db
+*.db-journal
+/data/
+*-Export.xlsx
+
+# Personal/private local config (never commit)
+.env.build
+.denylist.local
+
+# Go
+/vendor/
+*.test
+*.out
+coverage.out
+
+# E2E
+/e2e/node_modules/
+/e2e/test-results/
+/e2e/playwright-report/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

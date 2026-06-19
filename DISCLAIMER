@@ -1,0 +1,16 @@
+Tallywell — Disclaimer
+
+Tallywell is a personal bookkeeping aid for therapists. It is provided "as is",
+without warranty of any kind (see LICENSE).
+
+- Tallywell is NOT an electronic health record (EHR) or a system of record. The
+  payers and practice-management platforms you use remain your systems of record.
+- Tallywell is NOT tax, accounting, or legal advice. Figures it produces are for
+  your own organization and for handoff to a qualified professional. Verify all
+  numbers before relying on them.
+- Tallywell is NOT "HIPAA certified." Software cannot be HIPAA compliant on its
+  own — compliance is a property of your practices and safeguards. Tallywell is
+  designed to SUPPORT HIPAA-conscious, local-first use. See SECURITY-AND-HIPAA.md.
+
+You are responsible for the security of the device you run Tallywell on and for
+how you handle protected health information.

@@ -1,0 +1,14 @@
+# Copy to .denylist.local (gitignored) and add one term per line.
+# scripts/check-denylist.sh greps staged changes for these terms (case-insensitive,
+# fixed strings) and blocks the commit on any match. Keeps personal and
+# infrastructure identifiers out of the public repo.
+#
+# Put the real values ONLY in .denylist.local, never here. Examples of the kinds
+# of terms to list (replace with your own):
+#
+#   <your full name>
+#   <your practice name>
+#   <your employer name>
+#   <your build server hostname / domain>
+#
+# Lines starting with # and blank lines are ignored.
