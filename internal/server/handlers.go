@@ -84,9 +84,9 @@ func (s *Server) handleLock(w http.ResponseWriter, r *http.Request) {
 // --- dashboard ---
 
 type dashboardView struct {
-	Summary  reconcile.Summary
+	Summary   reconcile.Summary
 	Practices map[string]model.Practice
-	Payers   map[string]model.Payer
+	Payers    map[string]model.Payer
 }
 
 func (s *Server) handleDashboard(w http.ResponseWriter, r *http.Request) {
@@ -187,8 +187,8 @@ func (s *Server) handleAddSession(w http.ResponseWriter, r *http.Request) {
 // --- rates ---
 
 type ratesView struct {
-	Rates  []model.Rate
-	Payers []model.Payer
+	Rates     []model.Rate
+	Payers    []model.Payer
 	PayerName map[string]string
 }
 
@@ -231,8 +231,8 @@ func (s *Server) handleAddRate(w http.ResponseWriter, r *http.Request) {
 // --- settings (practices & payers) ---
 
 type settingsView struct {
-	Practices []model.Practice
-	Payers    []model.Payer
+	Practices    []model.Practice
+	Payers       []model.Payer
 	PracticeName map[string]string
 }
 

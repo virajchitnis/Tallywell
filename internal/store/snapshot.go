@@ -11,11 +11,11 @@ import (
 // JSON, encrypted, and written to disk; the in-memory SQLite database is
 // rebuilt from it on load.
 type Snapshot struct {
-	SchemaVersion int               `json:"schema_version"`
-	Practices     []model.Practice  `json:"practices"`
-	Payers        []model.Payer     `json:"payers"`
-	Rates         []model.Rate      `json:"rates"`
-	Records       []model.Record    `json:"records"`
+	SchemaVersion int              `json:"schema_version"`
+	Practices     []model.Practice `json:"practices"`
+	Payers        []model.Payer    `json:"payers"`
+	Rates         []model.Rate     `json:"rates"`
+	Records       []model.Record   `json:"records"`
 }
 
 // emptySnapshot returns a fresh snapshot at the current schema version.

@@ -75,13 +75,13 @@ func (s SessionStatus) CountsAsSeen() bool {
 // rows. Only minimal, money-relevant fields are kept — never client names,
 // notes, diagnoses, or addresses (see SECURITY-AND-HIPAA.md).
 type Record struct {
-	ID        string
-	Date      Date
-	ClientID  string // initials or opaque code — never a full name
+	ID         string
+	Date       Date
+	ClientID   string // initials or opaque code — never a full name
 	PracticeID string
-	PayerID   string
-	Service   string // service/CPT code, e.g. "90837"
-	Status    SessionStatus
+	PayerID    string
+	Service    string // service/CPT code, e.g. "90837"
+	Status     SessionStatus
 
 	Expected Cents // amount expected for this session
 	Paid     Cents // amount actually paid (0 until a payout is matched)

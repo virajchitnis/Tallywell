@@ -5,8 +5,8 @@ package server
 
 import (
 	"crypto/rand"
-	"encoding/hex"
 	"embed"
+	"encoding/hex"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -26,11 +26,11 @@ const sessionCookie = "tw_session"
 
 // Server holds the app core, parsed templates, and session state.
 type Server struct {
-	app       *app.App
-	tmpl      *template.Template
-	mux       *http.ServeMux
-	autoLock  time.Duration
-	now       func() time.Time
+	app      *app.App
+	tmpl     *template.Template
+	mux      *http.ServeMux
+	autoLock time.Duration
+	now      func() time.Time
 
 	mu         sync.Mutex
 	sessionID  string

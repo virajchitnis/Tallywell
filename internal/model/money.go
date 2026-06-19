@@ -64,8 +64,8 @@ func ParseMoney(s string) (Cents, error) {
 
 	// Round to two decimal places using the third fractional digit.
 	var cents int64
-	switch {
-	case frac == "":
+	switch frac {
+	case "":
 		cents = 0
 	default:
 		for i := 0; i < len(frac); i++ {

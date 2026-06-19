@@ -44,11 +44,11 @@ type MonthTotals struct {
 
 // Summary is the full set of roll-ups over a collection of records.
 type Summary struct {
-	Overall      Totals
-	ByPayer      []PayerTotals
-	ByMonth      []MonthTotals
-	OwnPractice  Totals // records whose practice is PracticeOwn
-	Employer     Totals // records whose practice is PracticeEmployer
+	Overall     Totals
+	ByPayer     []PayerTotals
+	ByMonth     []MonthTotals
+	OwnPractice Totals // records whose practice is PracticeOwn
+	Employer    Totals // records whose practice is PracticeEmployer
 }
 
 func monthKey(d model.Date) string {

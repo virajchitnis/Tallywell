@@ -16,9 +16,9 @@ func TestParseMoney(t *testing.T) {
 		{"  $1,234.50  ", 123450, false},
 		{".5", 50, false},
 		{"99.9", 9990, false},
-		{"1.005", 101, false},   // rounds half up on 3rd digit
-		{"1.004", 100, false},   // rounds down
-		{"2.999", 300, false},   // rounds up across the dollar
+		{"1.005", 101, false},           // rounds half up on 3rd digit
+		{"1.004", 100, false},           // rounds down
+		{"2.999", 300, false},           // rounds up across the dollar
 		{"($1,234.50)", -123450, false}, // parenthesized negative
 		{"-12.34", -1234, false},
 		{"", 0, true},
@@ -46,9 +46,9 @@ func TestParseMoney(t *testing.T) {
 
 func TestCentsString(t *testing.T) {
 	tests := []struct {
-		in       Cents
-		str      string
-		display  string
+		in      Cents
+		str     string
+		display string
 	}{
 		{0, "0.00", "$0.00"},
 		{15000, "150.00", "$150.00"},
