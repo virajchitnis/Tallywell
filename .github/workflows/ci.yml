@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files are not gofmt-ed:"; echo "$unformatted"; exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+      - name: Tests (race) + coverage gate
+        run: |
+          go test -race ./...
+          bash scripts/coverage-gate.sh
+
+      - name: Cross-compile check
+        run: |
+          for t in darwin/arm64 darwin/amd64 windows/amd64 linux/amd64; do
+            os="${t%/*}"; arch="${t#*/}"
+            echo "building $os/$arch"
+            CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build -o /dev/null .
+          done
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
+  commit-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Denylist guard
+        env:
+          TALLYWELL_DENYLIST: ${{ secrets.TALLYWELL_DENYLIST }}
+        run: |
+          if [ -z "$TALLYWELL_DENYLIST" ]; then
+            echo "No denylist configured; skipping."; exit 0
+          fi
+          bash scripts/check-denylist.sh --all
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build binary
+        run: go build -o tallywell .
+      - name: Install Playwright
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Run E2E smoke
+        working-directory: e2e
+        env:
+          TALLYWELL_BIN: ${{ github.workspace }}/tallywell
+        run: npx playwright test

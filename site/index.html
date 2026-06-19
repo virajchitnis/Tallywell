@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallywell — local-first income tracking for therapists</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="hero">
+  <div class="brand">Tallywell</div>
+  <h1>One clear picture of your sessions and income.</h1>
+  <p class="lede">For therapists juggling several payers — insurance platforms,
+  private pay, and an employer. See what you've earned, what's still owed, and
+  how your caseload looks, without logging into four portals.</p>
+  <p class="privacy"><strong>Local-first.</strong> No servers, no accounts. Your
+  client data never leaves your computer, and it's encrypted on disk.</p>
+  <a class="cta" href="#download">Download</a>
+</header>
+
+<main>
+  <section>
+    <h2>What it does</h2>
+    <ul class="features">
+      <li>Log sessions by hand, or import a payer's CSV export.</li>
+      <li>Automatically reconciles sessions against payouts that arrive weeks later.</li>
+      <li>Shows income by source and month, and what's still outstanding.</li>
+      <li>Keeps employer (W-2) income separate from your own practice for taxes.</li>
+      <li>Exports a clean spreadsheet for you or your accountant anytime.</li>
+    </ul>
+  </section>
+
+  <section id="download">
+    <h2>Download</h2>
+    <p class="muted">Pick the build for your computer. macOS is the same app on
+    Apple Silicon and Intel.</p>
+    <div class="downloads">
+      <a class="dl" href="downloads/tallywell-darwin-arm64">macOS · Apple Silicon</a>
+      <a class="dl" href="downloads/tallywell-darwin-amd64">macOS · Intel</a>
+      <a class="dl" href="downloads/tallywell-windows-amd64.exe">Windows</a>
+      <a class="dl" href="downloads/tallywell-linux-amd64">Linux</a>
+    </div>
+    <p class="muted"><a href="downloads/SHA256SUMS">Checksums (SHA-256)</a></p>
+
+    <h3>Installing on macOS</h3>
+    <p class="muted">The app isn't notarized yet, so the first time you open it
+    macOS will warn that it's from an unidentified developer. To allow it once:
+    right-click the downloaded file in Finder, choose <em>Open</em>, then confirm.
+    After that it opens normally and launches in your browser.</p>
+  </section>
+
+  <section>
+    <h2>Open source</h2>
+    <p class="muted">Tallywell is MIT-licensed and developed in the open, so
+    anyone can verify it really is local-first. Contributions — especially CSV
+    importers for more payers — are welcome.</p>
+    <p><a class="ghlink" href="https://github.com/tallywell/tallywell">View on GitHub</a></p>
+  </section>
+</main>
+
+<footer>
+  <p>Tallywell is not an EHR, and not tax or legal advice. It is designed for
+  HIPAA-conscious, local-first use; security depends on your own device and
+  practices.</p>
+</footer>
+</body>
+</html>
