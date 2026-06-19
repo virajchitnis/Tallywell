@@ -46,6 +46,8 @@ body.centered {
 .topbar nav a.active { color: var(--text); border-bottom: 2px solid var(--accent); }
 .lockform { margin: 0; }
 .link { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; padding: 0; }
+.quit-btn { color: var(--warn); }
+.nav-sep { color: var(--border); user-select: none; }
 .wrap { max-width: 920px; margin: 1.5rem auto; padding: 0 1.25rem; }
 h1 { font-size: 1.5rem; font-weight: 600; }
 h2 { font-size: 1.05rem; font-weight: 600; margin: 0 0 0.75rem; }

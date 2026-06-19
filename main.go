@@ -1,7 +1,7 @@
 // Command tallywell runs the local web app: it binds to loopback only, opens
 // the default browser, shows a system-tray icon, and serves the UI until the
-// user clicks Quit in the tray. All logic lives in internal/*; this file is
-// thin wiring.
+// user clicks Quit (in the nav bar or the tray menu). All logic lives in
+// internal/*; this file is thin wiring.
 //
 // Set TALLYWELL_NO_TRAY=1 to skip the system-tray icon and run in terminal
 // mode instead (useful for headless environments and integration tests).
@@ -63,18 +63,34 @@ func main() {
 		_ = httpSrv.Shutdown(ctx)
 	}
 
+	noTray := os.Getenv("TALLYWELL_NO_TRAY") == "1"
+
+	// done is closed when the web UI Quit button is clicked in headless mode.
+	done := make(chan struct{})
+	srv.SetQuitFunc(func() {
+		if noTray {
+			// Unblock the signal-select below so main can call shutdown.
+			close(done)
+		} else {
+			tray.Quit() // triggers onQuit → shutdown via tray.Run callback
+		}
+	})
+
 	openBrowser(url)
 
-	if os.Getenv("TALLYWELL_NO_TRAY") == "1" {
-		// Terminal / headless mode: run until Ctrl-C or SIGTERM.
+	if noTray {
+		// Terminal / headless mode: block until Ctrl-C, SIGTERM, or web UI Quit.
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
-		<-ch
+		select {
+		case <-ch:
+		case <-done:
+		}
 		shutdown()
 		return
 	}
 
-	// tray.Run blocks until the user clicks Quit in the menu-bar icon.
+	// tray.Run blocks until the user quits via the tray menu or web UI Quit.
 	tray.Run(url, openBrowser, shutdown)
 }
 

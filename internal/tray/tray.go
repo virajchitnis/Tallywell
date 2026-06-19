@@ -54,6 +54,10 @@ func Run(url string, openURL func(string), onQuit func()) {
 	}, onQuit)
 }
 
+// Quit programmatically stops the tray loop. Safe to call from any goroutine;
+// used by the web UI Quit button to trigger a clean shutdown.
+func Quit() { systray.Quit() }
+
 // makeIcon generates a 22×22 "T" glyph as a PNG — black on transparent,
 // suitable for macOS template icon rendering (auto-adapts dark/light mode).
 func makeIcon() []byte {

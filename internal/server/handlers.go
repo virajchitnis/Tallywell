@@ -292,6 +292,18 @@ func (s *Server) handleAddPayer(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/settings", http.StatusSeeOther)
 }
 
+// --- quit ---
+
+func (s *Server) handleQuit(w http.ResponseWriter, r *http.Request) {
+	s.render(w, "quit.html", pageData{})
+	if s.quit != nil {
+		go func() {
+			time.Sleep(300 * time.Millisecond)
+			s.quit()
+		}()
+	}
+}
+
 // --- import (Phase 2 placeholder) / export ---
 
 func (s *Server) handleImport(w http.ResponseWriter, r *http.Request) {

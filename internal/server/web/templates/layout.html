@@ -17,6 +17,8 @@
     <a href="/settings" class="{{if eq .Active "settings"}}active{{end}}">Settings</a>
     <a href="/export">Export</a>
     <form method="post" action="/lock" class="lockform"><button type="submit" class="link">Lock</button></form>
+    <span class="nav-sep">|</span>
+    <form method="post" action="/quit" class="lockform"><button type="submit" class="link quit-btn">Quit</button></form>
   </nav>
 </header>
 <main class="wrap">

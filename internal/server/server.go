@@ -31,11 +31,17 @@ type Server struct {
 	mux      *http.ServeMux
 	autoLock time.Duration
 	now      func() time.Time
+	quit     func() // called when the user clicks Quit in the web UI
 
 	mu         sync.Mutex
 	sessionID  string
 	lastActive time.Time
 }
+
+// SetQuitFunc registers f to be called when the user requests a graceful
+// shutdown via the web UI Quit button. f is called from a goroutine after a
+// short delay so the response can be flushed to the browser first.
+func (s *Server) SetQuitFunc(f func()) { s.quit = f }
 
 // New builds a Server over the given app core.
 func New(a *app.App, autoLock time.Duration) (*Server, error) {
@@ -83,6 +89,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /settings/payer", s.guard(s.handleAddPayer))
 	s.mux.HandleFunc("GET /import", s.guard(s.handleImport))
 	s.mux.HandleFunc("GET /export", s.guard(s.handleExport))
+	s.mux.HandleFunc("POST /quit", s.guard(s.handleQuit))
 }
 
 // guard wraps a handler so it only runs when the app is unlocked with a valid
