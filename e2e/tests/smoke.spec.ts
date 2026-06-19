@@ -12,7 +12,7 @@ function startApp(): Promise<{ proc: ChildProcess; url: string }> {
   const home = mkdtempSync(join(tmpdir(), 'tallywell-e2e-'));
 
   return new Promise((resolve, reject) => {
-    const proc = spawn(bin, [], { env: { ...process.env, HOME: home } });
+    const proc = spawn(bin, [], { env: { ...process.env, HOME: home, TALLYWELL_NO_TRAY: '1' } });
     let out = '';
     const onData = (d: Buffer) => {
       out += d.toString();
