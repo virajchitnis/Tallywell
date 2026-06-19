@@ -3,6 +3,7 @@ module github.com/tallywell/tallywell
 go 1.25.0
 
 require (
+	fyne.io/systray v1.11.0
 	github.com/xuri/excelize/v2 v2.10.1
 	golang.org/x/crypto v0.53.0
 	modernc.org/sqlite v1.52.0
