@@ -1,0 +1,15 @@
+{{define "setup.html"}}{{template "bare_start" .}}
+<h1>Welcome</h1>
+<p class="muted">Create a passphrase to protect your data. It encrypts everything
+on this computer — there is no server and no way to reset it, so keep it safe.
+If you lose it, your data cannot be recovered.</p>
+<form method="post" action="/setup" class="stack">
+  <label>Passphrase
+    <input type="password" name="passphrase" autocomplete="new-password" autofocus required minlength="8">
+  </label>
+  <label>Confirm passphrase
+    <input type="password" name="confirm" autocomplete="new-password" required minlength="8">
+  </label>
+  <button type="submit" class="primary">Create &amp; continue</button>
+</form>
+{{template "bare_end" .}}{{end}}

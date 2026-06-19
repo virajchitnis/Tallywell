@@ -1,0 +1,42 @@
+{{define "rates.html"}}{{template "shell_start" .}}
+{{with .Content}}
+<h1>Rates</h1>
+<p class="muted">Set what each payer pays per session, so expected amounts fill
+in automatically when you log a session. Leave the service blank for a payer's
+default rate.</p>
+
+<section class="card">
+  <h2>Add a rate</h2>
+  {{if .Payers}}
+  <form method="post" action="/rates" class="rowform">
+    <label>Payer
+      <select name="payer_id" required>
+        {{range .Payers}}<option value="{{.ID}}">{{.Name}}</option>{{end}}
+      </select>
+    </label>
+    <label>Service<input type="text" name="service" placeholder="blank = default" size="10"></label>
+    <label>Amount<input type="text" name="amount" placeholder="$120" size="8" required></label>
+    <button type="submit" class="primary">Add</button>
+  </form>
+  {{else}}
+  <p class="muted">No payers configured yet.</p>
+  {{end}}
+</section>
+
+<section class="card">
+  <h2>Current rates</h2>
+  {{if .Rates}}
+  <table>
+    <thead><tr><th>Payer</th><th>Service</th><th class="num">Amount</th></tr></thead>
+    <tbody>
+    {{range .Rates}}
+      <tr><td>{{index $.Content.PayerName .PayerID}}</td>
+        <td>{{if .Service}}{{.Service}}{{else}}(default){{end}}</td>
+        <td class="num">{{money .Amount}}</td></tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{else}}<p class="muted">No rates yet.</p>{{end}}
+</section>
+{{end}}
+{{template "shell_end" .}}{{end}}

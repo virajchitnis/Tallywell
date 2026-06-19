@@ -1,0 +1,54 @@
+{{define "settings.html"}}{{template "shell_start" .}}
+{{with .Content}}
+<h1>Settings</h1>
+<p class="muted">Set up your practices and the payers you bill through. Nothing
+is pre-filled — this is your own configuration.</p>
+
+<section class="card">
+  <h2>Practices</h2>
+  <form method="post" action="/settings/practice" class="rowform">
+    <label>Name<input type="text" name="name" placeholder="My Practice" required></label>
+    <label>Type
+      <select name="kind">
+        <option value="own">My own practice</option>
+        <option value="employer">An employer</option>
+      </select>
+    </label>
+    <button type="submit" class="primary">Add practice</button>
+  </form>
+  {{if .Practices}}
+  <table>
+    <thead><tr><th>Name</th><th>Type</th></tr></thead>
+    <tbody>{{range .Practices}}<tr><td>{{.Name}}</td><td>{{if eq (printf "%s" .Kind) "own"}}Own practice{{else}}Employer{{end}}</td></tr>{{end}}</tbody>
+  </table>
+  {{else}}<p class="muted">No practices yet.</p>{{end}}
+</section>
+
+<section class="card">
+  <h2>Payers</h2>
+  {{if .Practices}}
+  <form method="post" action="/settings/payer" class="rowform">
+    <label>Name<input type="text" name="name" placeholder="Platform / private pay" required></label>
+    <label>Practice
+      <select name="practice_id" required>{{range .Practices}}<option value="{{.ID}}">{{.Name}}</option>{{end}}</select>
+    </label>
+    <label>Type
+      <select name="kind">
+        <option value="insurance_platform">Insurance platform</option>
+        <option value="private">Private pay</option>
+        <option value="employer">Employer</option>
+      </select>
+    </label>
+    <label>Importer<input type="text" name="importer_key" placeholder="optional" size="10"></label>
+    <button type="submit" class="primary">Add payer</button>
+  </form>
+  {{else}}<p class="muted">Add a practice first.</p>{{end}}
+  {{if .Payers}}
+  <table>
+    <thead><tr><th>Name</th><th>Practice</th><th>Type</th></tr></thead>
+    <tbody>{{range .Payers}}<tr><td>{{.Name}}</td><td>{{index $.Content.PracticeName .PracticeID}}</td><td>{{.Kind}}</td></tr>{{end}}</tbody>
+  </table>
+  {{else}}<p class="muted">No payers yet.</p>{{end}}
+</section>
+{{end}}
+{{template "shell_end" .}}{{end}}

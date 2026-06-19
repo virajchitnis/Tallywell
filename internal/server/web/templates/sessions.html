@@ -1,0 +1,57 @@
+{{define "sessions.html"}}{{template "shell_start" .}}
+{{with .Content}}
+<h1>Sessions</h1>
+
+<section class="card">
+  <h2>Add a session</h2>
+  {{if .Payers}}
+  <form method="post" action="/sessions" class="rowform">
+    <label>Date<input type="date" name="date" required></label>
+    <label>Client<input type="text" name="client_id" placeholder="initials" size="6"></label>
+    <label>Payer
+      <select name="payer_id" required>
+        {{range .Payers}}<option value="{{.ID}}">{{.Name}}</option>{{end}}
+      </select>
+    </label>
+    <label>Service<input type="text" name="service" placeholder="90837" size="6"></label>
+    <label>Status
+      <select name="status">
+        <option value="completed">Completed</option>
+        <option value="scheduled">Scheduled</option>
+        <option value="no_show">No-show</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </label>
+    <label>Expected<input type="text" name="expected" placeholder="auto" size="7"></label>
+    <label class="check"><input type="checkbox" name="paid"> Paid</label>
+    <button type="submit" class="primary">Add</button>
+  </form>
+  {{else}}
+  <p class="muted">Add a payer on the Rates page first, then you can log sessions.</p>
+  {{end}}
+</section>
+
+<section class="card">
+  <h2>All sessions</h2>
+  {{if .Records}}
+  <table>
+    <thead><tr><th>Date</th><th>Client</th><th>Payer</th><th>Service</th><th>Status</th><th class="num">Expected</th><th class="num">Paid</th><th>Paid on</th></tr></thead>
+    <tbody>
+    {{range .Records}}
+      <tr class="{{if and (eq (printf "%s" .Status) "completed") (not .IsPaid)}}unpaid{{end}}">
+        <td>{{date .Date}}</td>
+        <td>{{.ClientID}}</td>
+        <td>{{index $.Content.PayerName .PayerID}}</td>
+        <td>{{.Service}}</td>
+        <td>{{.Status}}</td>
+        <td class="num">{{money .Expected}}</td>
+        <td class="num">{{money .Paid}}</td>
+        <td>{{date .DatePaid}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{else}}<p class="muted">No sessions yet — add your first one above.</p>{{end}}
+</section>
+{{end}}
+{{template "shell_end" .}}{{end}}

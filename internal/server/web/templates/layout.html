@@ -1,0 +1,46 @@
+{{define "shell_start"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallywell</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Tallywell</div>
+  <nav>
+    <a href="/" class="{{if eq .Active "dashboard"}}active{{end}}">Home</a>
+    <a href="/sessions" class="{{if eq .Active "sessions"}}active{{end}}">Sessions</a>
+    <a href="/rates" class="{{if eq .Active "rates"}}active{{end}}">Rates</a>
+    <a href="/import" class="{{if eq .Active "import"}}active{{end}}">Import</a>
+    <a href="/settings" class="{{if eq .Active "settings"}}active{{end}}">Settings</a>
+    <a href="/export">Export</a>
+    <form method="post" action="/lock" class="lockform"><button type="submit" class="link">Lock</button></form>
+  </nav>
+</header>
+<main class="wrap">
+{{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+{{end}}
+
+{{define "shell_end"}}</main>
+</body>
+</html>{{end}}
+
+{{define "bare_start"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallywell</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="centered">
+<main class="card narrow">
+<div class="brand big">Tallywell</div>
+{{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+{{end}}
+
+{{define "bare_end"}}</main>
+</body>
+</html>{{end}}

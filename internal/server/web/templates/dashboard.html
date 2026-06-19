@@ -1,0 +1,59 @@
+{{define "dashboard.html"}}{{template "shell_start" .}}
+{{with .Content}}
+{{$s := .Summary}}
+<h1>Here's where things stand</h1>
+
+<section class="cards">
+  <div class="metric">
+    <div class="label">Earned</div>
+    <div class="value">{{money $s.Overall.Earned}}</div>
+  </div>
+  <div class="metric">
+    <div class="label">Still owed to you</div>
+    <div class="value warn">{{money $s.Overall.Outstanding}}</div>
+  </div>
+  <div class="metric">
+    <div class="label">Sessions</div>
+    <div class="value">{{$s.Overall.Sessions}}</div>
+  </div>
+  <div class="metric">
+    <div class="label">Paid so far</div>
+    <div class="value ok">{{money $s.Overall.Paid}}</div>
+  </div>
+</section>
+
+<div class="grid2">
+  <section class="card">
+    <h2>Income by source</h2>
+    {{if $s.ByPayer}}
+    <table>
+      <thead><tr><th>Payer</th><th class="num">Sessions</th><th class="num">Earned</th><th class="num">Outstanding</th></tr></thead>
+      <tbody>
+      {{range $s.ByPayer}}
+        <tr><td>{{if .PayerName}}{{.PayerName}}{{else}}(unnamed){{end}}</td>
+          <td class="num">{{.Sessions}}</td>
+          <td class="num">{{money .Earned}}</td>
+          <td class="num">{{money .Outstanding}}</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+    {{else}}<p class="muted">No sessions yet. Add your first one on the Sessions page.</p>{{end}}
+  </section>
+
+  <section class="card">
+    <h2>Employer vs own practice</h2>
+    <table>
+      <tbody>
+        <tr><td>Own practice (self-employed)</td><td class="num">{{money $s.OwnPractice.Earned}}</td></tr>
+        <tr><td>Employer (W-2)</td><td class="num">{{money $s.Employer.Earned}}</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div class="actions">
+  <a class="primary" href="/sessions">Add a session</a>
+  <a class="secondary" href="/import">Import a CSV</a>
+</div>
+{{end}}
+{{template "shell_end" .}}{{end}}

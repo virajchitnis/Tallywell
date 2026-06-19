@@ -1,0 +1,10 @@
+{{define "unlock.html"}}{{template "bare_start" .}}
+<h1>Unlock</h1>
+<p class="muted">Enter your passphrase to open your data.</p>
+<form method="post" action="/unlock" class="stack">
+  <label>Passphrase
+    <input type="password" name="passphrase" autocomplete="current-password" autofocus required>
+  </label>
+  <button type="submit" class="primary">Unlock</button>
+</form>
+{{template "bare_end" .}}{{end}}
