@@ -80,3 +80,26 @@ func DaysBetween(a, b Date) int {
 func WithinDays(a, b Date, n int) bool {
 	return DaysBetween(a, b) <= n
 }
+
+// MarshalJSON serializes the date as an ISO string, or null when zero.
+func (d Date) MarshalJSON() ([]byte, error) {
+	if d.IsZero() {
+		return []byte("null"), nil
+	}
+	return []byte(`"` + d.String() + `"`), nil
+}
+
+// UnmarshalJSON parses an ISO date string, treating null/"" as the zero date.
+func (d *Date) UnmarshalJSON(data []byte) error {
+	s := strings.Trim(string(data), `"`)
+	if s == "null" || s == "" {
+		*d = Date{}
+		return nil
+	}
+	parsed, err := ParseDate(s)
+	if err != nil {
+		return err
+	}
+	*d = parsed
+	return nil
+}
