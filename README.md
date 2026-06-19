@@ -39,7 +39,7 @@ Early development. See [ROADMAP.md](ROADMAP.md) for what's planned.
 
 ## Building
 
-Requires Go 1.23+. `go build ./...`. A server-agnostic remote-Docker build helper
+Requires Go 1.25+. `go build ./...`. A server-agnostic remote-Docker build helper
 is in `scripts/remote-build.sh` (see that file for the environment variables it
 reads).
 
