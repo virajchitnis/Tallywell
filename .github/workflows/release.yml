@@ -78,6 +78,8 @@ jobs:
           mkdir -p _site/downloads
           cp -r site/* _site/ 2>/dev/null || true
           cp dist/tallywell-* dist/Tallywell-*.dmg dist/SHA256SUMS _site/downloads/
+          # Stable URL for the site's download button — always points to latest.
+          cp dist/Tallywell-*.dmg _site/downloads/Tallywell.dmg
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
