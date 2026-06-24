@@ -9,8 +9,12 @@ import (
 	"testing"
 	"time"
 
+	keyring "github.com/zalando/go-keyring"
+
 	"github.com/tallywell/tallywell/internal/app"
 )
+
+func init() { keyring.MockInit() }
 
 type testEnv struct {
 	ts     *httptest.Server

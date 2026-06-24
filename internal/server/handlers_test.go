@@ -197,6 +197,68 @@ func TestAddPayerMissingPracticeRedirects(t *testing.T) {
 	}
 }
 
+// --- keychain auto-unlock and toggle ---
+
+func TestKeychainAutoUnlock(t *testing.T) {
+	e := unlocked(t)
+
+	// Enable keychain auto-unlock via the settings toggle.
+	resp := e.post(t, "/settings/keychain", url.Values{"action": {"add"}})
+	if !strings.Contains(resp.Request.URL.String(), "keychain=ok") {
+		t.Errorf("expected redirect to /settings?keychain=ok, got %s", resp.Request.URL)
+	}
+
+	// Lock the app to simulate a re-open.
+	e.post(t, "/lock", url.Values{})
+
+	// GET /unlock should auto-unlock via keychain and redirect to dashboard.
+	resp = e.get(t, "/unlock")
+	if resp.Request.URL.Path != "/" {
+		t.Errorf("expected keychain auto-unlock to redirect to /, got %s", resp.Request.URL.Path)
+	}
+	if got := body(t, resp); !strings.Contains(got, "Here's where things stand") {
+		t.Errorf("expected dashboard after keychain auto-unlock: %.120s", got)
+	}
+}
+
+func TestKeychainDisable(t *testing.T) {
+	e := unlocked(t)
+	e.post(t, "/settings/keychain", url.Values{"action": {"add"}})
+
+	// Disable.
+	resp := e.post(t, "/settings/keychain", url.Values{"action": {"remove"}})
+	if !strings.Contains(resp.Request.URL.String(), "keychain=ok") {
+		t.Errorf("expected redirect to /settings?keychain=ok, got %s", resp.Request.URL)
+	}
+
+	// Lock — unlock page should show passphrase form, not auto-unlock.
+	e.post(t, "/lock", url.Values{})
+	resp = e.get(t, "/unlock")
+	if resp.Request.URL.Path == "/" {
+		t.Error("should not auto-unlock after disabling keychain")
+	}
+	if got := body(t, resp); !strings.Contains(got, "Unlock") {
+		t.Errorf("expected unlock form after disable: %.120s", got)
+	}
+}
+
+func TestSettingsShowsKeychainState(t *testing.T) {
+	e := unlocked(t)
+
+	// Before enabling: settings should offer "Enable auto-unlock".
+	got := body(t, e.get(t, "/settings"))
+	if !strings.Contains(got, "Enable auto-unlock") {
+		t.Errorf("expected enable button before keychain enrolled: %.200s", got)
+	}
+
+	// After enabling: settings should offer "Disable auto-unlock".
+	e.post(t, "/settings/keychain", url.Values{"action": {"add"}})
+	got = body(t, e.get(t, "/settings"))
+	if !strings.Contains(got, "Disable auto-unlock") {
+		t.Errorf("expected disable button after keychain enrolled: %.200s", got)
+	}
+}
+
 // --- reset ---
 
 func TestResetFormRendered(t *testing.T) {

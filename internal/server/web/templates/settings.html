@@ -52,6 +52,30 @@ is pre-filled — this is your own configuration.</p>
 </section>
 {{end}}
 
+<section class="card">
+  <h2>Auto-unlock</h2>
+  {{if .Content.HasKeychain}}
+  <p>Tallywell opens automatically using your <strong>system keychain</strong> —
+  no passphrase required at launch. Your passphrase remains available as a
+  fallback at any time.</p>
+  <form method="post" action="/settings/keychain">
+    <input type="hidden" name="action" value="remove">
+    <button type="submit" class="secondary">Disable auto-unlock</button>
+  </form>
+  {{else}}
+  <p>Enable auto-unlock to open Tallywell without typing your passphrase each
+  time. Your data stays fully encrypted; the unlock key is stored in your
+  system keychain (macOS Keychain, Windows Credential Manager, or the Linux
+  Secret Service). Your passphrase always works as a fallback.</p>
+  <p class="muted">Recommended only if you have full-disk encryption enabled
+  (FileVault on macOS, BitLocker on Windows, or dm-crypt/LUKS on Linux).</p>
+  <form method="post" action="/settings/keychain">
+    <input type="hidden" name="action" value="add">
+    <button type="submit" class="primary">Enable auto-unlock</button>
+  </form>
+  {{end}}
+</section>
+
 <section class="card danger-zone">
   <h2>Danger zone</h2>
   <p class="muted">Permanent actions that cannot be undone.</p>

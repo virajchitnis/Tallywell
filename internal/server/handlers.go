@@ -56,6 +56,19 @@ func (s *Server) handleUnlockForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	// Keychain auto-unlock: if enrolled, silently unlock and issue a new session.
+	if s.app.HasKeychainKey() {
+		if err := s.app.UnlockWithKeychain(); err == nil {
+			if err2 := s.startSession(w); err2 == nil {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+		}
+		// Keychain was enrolled but failed (entry deleted, keychain locked, etc.)
+		// Fall through to the passphrase form with a helpful note.
+		s.render(w, "unlock.html", pageData{Flash: "Auto-unlock unavailable — enter your passphrase."})
+		return
+	}
 	flash := ""
 	if r.URL.Query().Get("timeout") == "1" {
 		flash = "Locked after inactivity. Enter your passphrase to continue."
@@ -235,6 +248,7 @@ type settingsView struct {
 	Practices    []model.Practice
 	Payers       []model.Payer
 	PracticeName map[string]string
+	HasKeychain  bool
 }
 
 func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
@@ -249,8 +263,16 @@ func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
 	for _, p := range practices {
 		names[p.ID] = p.Name
 	}
-	s.render(w, "settings.html", pageData{Active: "settings", Content: settingsView{
+	flash := ""
+	switch r.URL.Query().Get("keychain") {
+	case "ok":
+		flash = "Auto-unlock setting updated."
+	case "err":
+		flash = "Could not update auto-unlock — is your system keychain accessible?"
+	}
+	s.render(w, "settings.html", pageData{Active: "settings", Flash: flash, Content: settingsView{
 		Practices: practices, Payers: payers, PracticeName: names,
+		HasKeychain: s.app.HasKeychainKey(),
 	}})
 }
 
@@ -303,6 +325,21 @@ func (s *Server) handleQuit(w http.ResponseWriter, r *http.Request) {
 			s.quit()
 		}()
 	}
+}
+
+func (s *Server) handleToggleKeychain(w http.ResponseWriter, r *http.Request) {
+	var err error
+	switch r.FormValue("action") {
+	case "add":
+		err = s.app.AddKeychainKey()
+	case "remove":
+		err = s.app.RemoveKeychainKey()
+	}
+	if err != nil {
+		http.Redirect(w, r, "/settings?keychain=err", http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, "/settings?keychain=ok", http.StatusSeeOther)
 }
 
 // --- reset / uninstall ---

@@ -3,8 +3,12 @@ package app
 import (
 	"testing"
 
+	keyring "github.com/zalando/go-keyring"
+
 	"github.com/tallywell/tallywell/internal/model"
 )
+
+func init() { keyring.MockInit() }
 
 func TestLifecycle(t *testing.T) {
 	dir := t.TempDir()
@@ -132,6 +136,87 @@ func TestReset(t *testing.T) {
 	}
 	if a2.Phase() != PhaseUnlocked {
 		t.Fatalf("phase after re-setup = %v, want Unlocked", a2.Phase())
+	}
+}
+
+func TestKeychainAddAndUnlock(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+
+	if a.HasKeychainKey() {
+		t.Fatal("should have no keychain key after setup")
+	}
+	if err := a.AddKeychainKey(); err != nil {
+		t.Fatalf("AddKeychainKey: %v", err)
+	}
+	if !a.HasKeychainKey() {
+		t.Fatal("should have keychain key after add")
+	}
+
+	// Lock and re-unlock via keychain.
+	_ = a.Lock()
+	if a.Phase() != PhaseLocked {
+		t.Fatalf("phase after lock = %v, want Locked", a.Phase())
+	}
+	if err := a.UnlockWithKeychain(); err != nil {
+		t.Fatalf("UnlockWithKeychain: %v", err)
+	}
+	if a.Phase() != PhaseUnlocked {
+		t.Fatalf("phase after keychain unlock = %v, want Unlocked", a.Phase())
+	}
+}
+
+func TestKeychainRemove(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+	_ = a.AddKeychainKey()
+
+	if err := a.RemoveKeychainKey(); err != nil {
+		t.Fatalf("RemoveKeychainKey: %v", err)
+	}
+	if a.HasKeychainKey() {
+		t.Fatal("should not have keychain key after remove")
+	}
+
+	// Keychain unlock must now fail.
+	_ = a.Lock()
+	if err := a.UnlockWithKeychain(); err == nil {
+		t.Fatal("UnlockWithKeychain after remove should fail")
+	}
+	// Passphrase still works.
+	if err := a.Unlock("pw"); err != nil {
+		t.Fatalf("passphrase unlock after keychain remove: %v", err)
+	}
+}
+
+func TestKeychainRemoveIdempotent(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+	// RemoveKeychainKey with nothing enrolled should be a no-op.
+	if err := a.RemoveKeychainKey(); err != nil {
+		t.Fatalf("RemoveKeychainKey on clean envelope: %v", err)
+	}
+}
+
+func TestKeychainEnvelopePersists(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+	_ = a.AddKeychainKey()
+
+	// Reload from disk — keychain wrap must survive.
+	a2, err := New(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !a2.HasKeychainKey() {
+		t.Fatal("keychain key not present after reload from disk")
+	}
+	if err := a2.UnlockWithKeychain(); err != nil {
+		t.Fatalf("UnlockWithKeychain after reload: %v", err)
 	}
 }
 
