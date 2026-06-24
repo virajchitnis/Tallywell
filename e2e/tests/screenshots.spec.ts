@@ -100,6 +100,10 @@ test('generate website screenshots', async ({ page }) => {
     await page.goto(url + 'settings');
     await page.waitForSelector('h1');
 
+    // About card — scroll to it and screenshot
+    await page.locator('.card:has(h2:text("About"))').scrollIntoViewIfNeeded();
+    await shot(page, 'settings-about.png');
+
     // Danger zone — reset page (shows the warning and confirmation form)
     await page.goto(url + 'reset');
     await page.waitForSelector('h1');

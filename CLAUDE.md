@@ -75,7 +75,7 @@ The three layers form a strict stack:
 
 ### HTTP server (`internal/server`)
 
-`server.New` takes an `*app.App` and returns a `*Server`. All app-data routes are wrapped in `guard()`, which checks the app phase, validates a session cookie (`tw_session`), and enforces a 15-minute idle auto-lock. No authentication middleware — the guard is on every data handler directly. Key guarded routes: `GET /unlock` tries keychain auto-unlock first (if enrolled) before rendering the passphrase form; `POST /settings/keychain` (action=add|remove) toggles the keychain tier; `GET /reset` shows a warning page with the data directory path + uninstall instructions; `POST /reset` validates that the body contains `confirm=RESET` (exact string, case-sensitive) before calling `app.Reset()` and clearing the session.
+`server.New` takes an `*app.App`, `autoLock time.Duration`, and `version string`; returns a `*Server`. All app-data routes are wrapped in `guard()`, which checks the app phase, validates a session cookie (`tw_session`), and enforces a 15-minute idle auto-lock. No authentication middleware — the guard is on every data handler directly. Key guarded routes: `GET /unlock` tries keychain auto-unlock first (if enrolled) before rendering the passphrase form; `POST /settings/keychain` (action=add|remove) toggles the keychain tier; `POST /settings/check-update` hits the GitHub releases API (user-initiated only — no background checks) and redirects to `/settings?update=current|available|error`; `GET /reset` shows a warning page with the data directory path + uninstall instructions; `POST /reset` validates that the body contains `confirm=RESET` (exact string, case-sensitive) before calling `app.Reset()` and clearing the session. The `updateChecker` function field is injectable for tests. `version` is set via `-ldflags "-X main.version=vX.Y.Z"` at build time (falls back to `"dev"`).
 
 Templates are `go:embed`ded from `internal/server/web/templates/*.html` and parsed at startup. Static assets are served from `internal/server/web/static/`. `layout.html` defines `{{template "layout" .}}` used by all app pages; `setup.html` and `unlock.html` use `bare_start`/`bare_end` blocks (no nav).
 
@@ -83,7 +83,7 @@ Templates are `go:embed`ded from `internal/server/web/templates/*.html` and pars
 
 ### `main.go`
 
-Thin wiring only. Binds `127.0.0.1:0` (random port). `gui.Open` (from `internal/gui`) returns `run` and `quit` functions; `run()` blocks the main goroutine (required by Cocoa/GTK). `TALLYWELL_NO_TRAY=1` skips the GUI window and blocks on a `select` over SIGINT/SIGTERM and a `done` channel that the web UI Quit button closes.
+Thin wiring only. Declares `var version = "dev"` (overridden by ldflags at build time). Binds `127.0.0.1:0` (random port). `gui.Open` (from `internal/gui`) returns `run` and `quit` functions; `run()` blocks the main goroutine (required by Cocoa/GTK). `TALLYWELL_NO_TRAY=1` skips the GUI window and blocks on a `select` over SIGINT/SIGTERM and a `done` channel that the web UI Quit button closes.
 
 ### Data model (`internal/model`)
 

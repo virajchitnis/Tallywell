@@ -29,6 +29,8 @@ for you and shows the result in one calm dashboard.
   data stays encrypted, passphrase always works as a fallback.
 - Need to start over? A built-in reset option deletes all your data and returns
   to first-run state, with step-by-step uninstall instructions.
+- **Version info and update check** in Settings — see your installed version and
+  check GitHub for a newer release on demand (no background network calls).
 
 ## Privacy & security
 
