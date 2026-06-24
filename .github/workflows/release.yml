@@ -21,15 +21,8 @@ jobs:
           go-version: '1.25'
           cache: true
 
-      - name: Build macOS binaries
-        run: |
-          mkdir -p dist
-          # arm64 — native on the macos-latest runner (Apple Silicon).
-          echo "building darwin/arm64"
-          MACOSX_DEPLOYMENT_TARGET=11.0 GOARCH=arm64 go build -o dist/tallywell-darwin-arm64 .
-          # amd64 — cross-compile requires explicit CGO flags on Apple Silicon.
-          echo "building darwin/amd64"
-          MACOSX_DEPLOYMENT_TARGET=11.0 CGO_ENABLED=1 CC="cc -arch x86_64" GOARCH=amd64 go build -o dist/tallywell-darwin-amd64 .
+      - name: Build macOS binaries and DMG
+        run: bash scripts/build-mac-app.sh
 
       - uses: actions/upload-artifact@v4
         with:
@@ -81,16 +74,17 @@ jobs:
 
       - name: Checksums + Pages assembly
         run: |
-          ( cd dist && sha256sum tallywell-* > SHA256SUMS )
+          ( cd dist && sha256sum tallywell-* Tallywell-*.dmg > SHA256SUMS )
           mkdir -p _site/downloads
           cp -r site/* _site/ 2>/dev/null || true
-          cp dist/tallywell-* dist/SHA256SUMS _site/downloads/
+          cp dist/tallywell-* dist/Tallywell-*.dmg dist/SHA256SUMS _site/downloads/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/tallywell-*
+            dist/Tallywell-*.dmg
             dist/SHA256SUMS
 
       - name: Upload Pages artifact

@@ -88,7 +88,29 @@ PLIST
 # when sent via AirDrop between personal Macs.
 xattr -cr "$APP_DIR" 2>/dev/null || true
 
+# ── DMG ───────────────────────────────────────────────────────────────────────
+
+echo "==> Creating DMG"
+DMG="dist/${APP}-${VERSION}.dmg"
+
+# Stage: app bundle + Applications symlink so the user can drag-to-install.
+staging=$(mktemp -d)
+cp -R "$APP_DIR" "$staging/"
+ln -s /Applications "$staging/Applications"
+
+hdiutil create \
+  -volname "$APP" \
+  -srcfolder "$staging" \
+  -ov \
+  -format UDZO \
+  "$DMG"
+
+rm -rf "$staging"
+xattr -cr "$DMG" 2>/dev/null || true
+
 echo ""
-echo "==> Done: dist/Tallywell.app  ($(du -sh "$APP_DIR" | cut -f1))"
-echo "    AirDrop it to her Mac — she can double-click it from anywhere."
-echo "    To install permanently: drag it to /Applications."
+echo "==> Done"
+echo "    App bundle : dist/Tallywell.app  ($(du -sh "$APP_DIR" | cut -f1))"
+echo "    Disk image : $DMG  ($(du -sh "$DMG" | cut -f1))"
+echo ""
+echo "    Share the .dmg — open it, drag Tallywell to Applications, done."
