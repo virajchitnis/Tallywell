@@ -13,7 +13,7 @@ function startApp(): Promise<{ proc: ChildProcess; url: string }> {
   if (!bin) throw new Error('set TALLYWELL_BIN to the built binary path');
   const home = mkdtempSync(join(tmpdir(), 'tallywell-shots-'));
   return new Promise((res, rej) => {
-    const proc = spawn(bin, [], { env: { ...process.env, HOME: home, TALLYWELL_NO_TRAY: '1' } });
+    const proc = spawn(bin, [], { env: { ...process.env, HOME: home, XDG_CONFIG_HOME: join(home, '.config'), TALLYWELL_NO_TRAY: '1' } });
     let out = '';
     const onData = (d: Buffer) => {
       out += d.toString();
