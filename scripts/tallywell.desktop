@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Tallywell
+Exec=tallywell
+Icon=tallywell
+Categories=Office;Finance;
+Comment=Local-first income tracking for therapists
+Terminal=false
+StartupNotify=false

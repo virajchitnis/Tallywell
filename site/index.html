@@ -56,10 +56,15 @@
     <h2>Download</h2>
     <div class="downloads">
       <a class="dl dl-primary" href="downloads/Tallywell.dmg">macOS (DMG)</a>
-      <a class="dl" href="downloads/tallywell-windows-amd64.exe">Windows</a>
-      <a class="dl" href="downloads/tallywell-linux-amd64">Linux</a>
+      <a class="dl dl-primary" href="downloads/Tallywell-Setup.exe">Windows (Installer)</a>
+      <a class="dl dl-primary" href="downloads/Tallywell.AppImage">Linux (AppImage)</a>
     </div>
-    <p class="muted"><a href="downloads/SHA256SUMS">Checksums (SHA-256)</a></p>
+    <p class="muted">
+      Portable downloads:
+      <a href="downloads/tallywell-windows-amd64.exe">Windows .exe</a> ·
+      <a href="downloads/tallywell-linux-amd64">Linux binary</a> ·
+      <a href="downloads/SHA256SUMS">Checksums (SHA-256)</a>
+    </p>
 
     <h3>Installing on macOS</h3>
     <ol class="muted">
@@ -70,6 +75,26 @@
     <p class="muted">On first launch macOS may warn that the app is from an unidentified
     developer (it isn't notarized yet). To allow it: right-click the app in Finder,
     choose <em>Open</em>, then confirm. After that it opens normally.</p>
+
+    <h3>Installing on Windows</h3>
+    <ol class="muted">
+      <li>Download <strong>Tallywell-Setup.exe</strong> and double-click it.</li>
+      <li>The installer adds Tallywell to your Start Menu — no administrator
+      password required.</li>
+      <li>Open Tallywell from the Start Menu or click <strong>Launch</strong>
+      at the end of the installer.</li>
+    </ol>
+
+    <h3>Running on Linux</h3>
+    <ol class="muted">
+      <li>Download <strong>Tallywell.AppImage</strong>.</li>
+      <li>Open a Terminal, navigate to your Downloads folder, and run:<br>
+      <code>chmod +x Tallywell.AppImage &amp;&amp; ./Tallywell.AppImage</code></li>
+      <li>Tallywell opens in your default browser.</li>
+    </ol>
+    <p class="muted">The AppImage requires <strong>libayatana-appindicator3</strong>
+    for the system-tray icon. It is pre-installed on Ubuntu and most GNOME desktops.
+    If the tray icon does not appear, Tallywell still runs normally in the browser.</p>
   </section>
 
   <section>

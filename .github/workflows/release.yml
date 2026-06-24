@@ -40,16 +40,49 @@ jobs:
           go-version: '1.25'
           cache: true
 
-      - name: Install Linux systray build dependency
-        run: sudo apt-get update -q && sudo apt-get install -y libayatana-appindicator3-dev
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libayatana-appindicator3-dev nsis imagemagick
 
       - name: Build Windows and Linux binaries
         run: |
           mkdir -p dist
-          echo "building windows/amd64"
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/tallywell-windows-amd64.exe .
-          echo "building linux/amd64"
           GOOS=linux GOARCH=amd64 go build -o dist/tallywell-linux-amd64 .
+
+      - name: Generate app icon
+        run: go run scripts/gen-icon.go
+
+      - name: Build Windows installer (NSIS)
+        run: |
+          convert dist/tallywell-icon-1024.png \
+            -define icon:auto-resize="256,128,64,48,32,16" dist/tallywell.ico
+          VERSION="${GITHUB_REF_NAME#v}"
+          makensis -DAPP_VERSION="$VERSION" scripts/tallywell.nsi
+
+      - name: Build Linux AppImage
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          mkdir -p Tallywell.AppDir/usr/bin
+          cp dist/tallywell-linux-amd64 Tallywell.AppDir/usr/bin/tallywell
+          chmod +x Tallywell.AppDir/usr/bin/tallywell
+
+          convert dist/tallywell-icon-1024.png -resize 256x256 Tallywell.AppDir/tallywell.png
+          ln -sf tallywell.png Tallywell.AppDir/.DirIcon
+          cp scripts/tallywell.desktop Tallywell.AppDir/tallywell.desktop
+
+          printf '#!/bin/bash\nHERE="$(dirname "$(readlink -f "$0")")"\nexec "${HERE}/usr/bin/tallywell" "$@"\n' \
+            > Tallywell.AppDir/AppRun
+          chmod +x Tallywell.AppDir/AppRun
+
+          wget -qO appimagetool \
+            "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool
+          ARCH=x86_64 ./appimagetool --appimage-extract-and-run \
+            Tallywell.AppDir "dist/Tallywell-${VERSION}-x86_64.AppImage"
+          chmod +x "dist/Tallywell-${VERSION}-x86_64.AppImage"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -117,20 +150,32 @@ jobs:
 
       - name: Checksums + Pages assembly
         run: |
-          ( cd dist && sha256sum tallywell-* Tallywell-*.dmg > SHA256SUMS )
+          ( cd dist && sha256sum \
+              tallywell-windows-amd64.exe \
+              tallywell-linux-amd64 \
+              Tallywell-*.dmg \
+              Tallywell-*-Setup.exe \
+              Tallywell-*-x86_64.AppImage > SHA256SUMS )
           mkdir -p _site/downloads _site/screenshots
           cp -r site/* _site/ 2>/dev/null || true
-          cp dist/tallywell-* dist/Tallywell-*.dmg dist/SHA256SUMS _site/downloads/
-          # Stable URL for the site's download button — always points to latest.
-          cp dist/Tallywell-*.dmg _site/downloads/Tallywell.dmg
+          cp dist/tallywell-windows-amd64.exe dist/tallywell-linux-amd64 _site/downloads/
+          cp dist/Tallywell-*.dmg dist/Tallywell-*-Setup.exe dist/Tallywell-*-x86_64.AppImage \
+            dist/SHA256SUMS _site/downloads/
+          # Stable URLs for download buttons
+          cp dist/Tallywell-*.dmg               _site/downloads/Tallywell.dmg
+          cp dist/Tallywell-*-Setup.exe         _site/downloads/Tallywell-Setup.exe
+          cp dist/Tallywell-*-x86_64.AppImage   _site/downloads/Tallywell.AppImage
           cp site-screenshots/*.png _site/screenshots/ 2>/dev/null || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/tallywell-*
+            dist/tallywell-windows-amd64.exe
+            dist/tallywell-linux-amd64
             dist/Tallywell-*.dmg
+            dist/Tallywell-*-Setup.exe
+            dist/Tallywell-*-x86_64.AppImage
             dist/SHA256SUMS
 
       - name: Upload Pages artifact

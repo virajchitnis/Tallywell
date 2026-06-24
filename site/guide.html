@@ -107,21 +107,37 @@
 
       <h3>Windows</h3>
       <ol>
-        <li>Click <strong>Windows</strong> on the download page.</li>
+        <li>Click <strong>Windows (Installer)</strong> on the download page.</li>
         <li>When the download finishes, double-click
-        <strong>tallywell-windows-amd64.exe</strong>.</li>
-        <li>Windows SmartScreen may show a warning. Click <strong>More info</strong>
-        then <strong>Run anyway</strong>.</li>
+        <strong>Tallywell-Setup.exe</strong>. No administrator password is
+        required — it installs just for your user account.</li>
+        <li>Windows SmartScreen may show a warning because Tallywell is not yet
+        code-signed. Click <strong>More info</strong>, then
+        <strong>Run anyway</strong>.</li>
+        <li>Follow the short installer (Next → Next → Install). At the end,
+        click <strong>Launch Tallywell</strong>, or find it in your Start Menu.</li>
         <li>Tallywell opens in your default browser.</li>
       </ol>
 
+      <div class="tip">
+        Prefer not to install? Download the <strong>Windows .exe</strong>
+        portable version instead — it runs directly without installing anything.
+      </div>
+
       <h3>Linux</h3>
       <ol>
-        <li>Click <strong>Linux</strong> on the download page.</li>
-        <li>Open a Terminal, navigate to where the file downloaded, and run:<br>
-        <code>chmod +x tallywell-linux-amd64 &amp;&amp; ./tallywell-linux-amd64</code></li>
+        <li>Click <strong>Linux (AppImage)</strong> on the download page.</li>
+        <li>Open a Terminal, navigate to your Downloads folder, and run:<br>
+        <code>chmod +x Tallywell.AppImage &amp;&amp; ./Tallywell.AppImage</code></li>
         <li>Tallywell opens in your default browser.</li>
       </ol>
+
+      <div class="tip">
+        The AppImage uses your system's tray library for the menu-bar icon.
+        On Ubuntu and most GNOME desktops this is already installed. If you
+        do not see a tray icon, Tallywell still works normally in the browser —
+        use the <strong>Quit</strong> button inside the app to stop it.
+      </div>
 
       <div class="tip">
         Tallywell runs as a small local server on your computer and opens in your
