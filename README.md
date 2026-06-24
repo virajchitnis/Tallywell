@@ -24,6 +24,8 @@ for you and shows the result in one calm dashboard.
 - Export a clean spreadsheet (`.xlsx`) any time — for your own records or your
   accountant.
 - Adapts to your system's **light or dark mode** automatically.
+- Need to start over? A built-in reset option deletes all your data and returns
+  to first-run state, with step-by-step uninstall instructions.
 
 ## Privacy & security
 

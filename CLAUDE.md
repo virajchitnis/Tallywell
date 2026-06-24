@@ -71,11 +71,11 @@ The three layers form a strict stack:
 
 2. **`internal/store`** — persistence. The on-disk format is an encrypted JSON blob (`tracker.db.enc`). On `Open`, the blob is decrypted and loaded into an **in-memory SQLite** database (`:memory:`, `modernc.org/sqlite`). Every mutation calls `persist()` to write an updated encrypted snapshot atomically (temp file + rename). `Store.DB()` exposes the `*sql.DB` for read-only use by other packages.
 
-3. **`internal/app`** — lifecycle state machine. Three phases: `PhaseNeedsSetup` (no envelope yet) → `PhaseLocked` (envelope exists, DEK not in memory) → `PhaseUnlocked` (store open). `Setup` creates the envelope + empty store. `Unlock` derives the DEK from the passphrase, decrypts the snapshot, and opens the store. `Lock` calls `store.Close()` and zeroes the DEK bytes.
+3. **`internal/app`** — lifecycle state machine. Three phases: `PhaseNeedsSetup` (no envelope yet) → `PhaseLocked` (envelope exists, DEK not in memory) → `PhaseUnlocked` (store open). `Setup` creates the envelope + empty store. `Unlock` derives the DEK from the passphrase, decrypts the snapshot, and opens the store. `Lock` calls `store.Close()` and zeroes the DEK bytes. `Reset` closes the store, wipes the DEK, nils the envelope, and deletes both data files, returning the app to `PhaseNeedsSetup`. `Dir()` returns the data directory path (used by the reset page to show the user where their files live).
 
 ### HTTP server (`internal/server`)
 
-`server.New` takes an `*app.App` and returns a `*Server`. All app-data routes are wrapped in `guard()`, which checks the app phase, validates a session cookie (`tw_session`), and enforces a 15-minute idle auto-lock. No authentication middleware — the guard is on every data handler directly.
+`server.New` takes an `*app.App` and returns a `*Server`. All app-data routes are wrapped in `guard()`, which checks the app phase, validates a session cookie (`tw_session`), and enforces a 15-minute idle auto-lock. No authentication middleware — the guard is on every data handler directly. Key guarded routes: `GET /reset` shows a warning page with the data directory path + uninstall instructions; `POST /reset` validates that the body contains `confirm=RESET` (exact string, case-sensitive) before calling `app.Reset()` and clearing the session.
 
 Templates are `go:embed`ded from `internal/server/web/templates/*.html` and parsed at startup. Static assets are served from `internal/server/web/static/`. `layout.html` defines `{{template "layout" .}}` used by all app pages; `setup.html` and `unlock.html` use `bare_start`/`bare_end` blocks (no nav).
 

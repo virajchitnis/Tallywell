@@ -39,6 +39,7 @@
         <li><a href="#security">Locking &amp; security</a></li>
         <li><a href="#quit">Quitting</a></li>
         <li><a href="#backup">Backing up</a></li>
+        <li><a href="#reset">Resetting &amp; uninstalling</a></li>
         <li><a href="#help">Getting help</a></li>
       </ol>
     </div>
@@ -255,6 +256,13 @@
         "Alma" (Insurance platform), "Headway" (Insurance platform), and
         "Private Pay" (Private pay) — three payers total.
       </div>
+
+      <h3>Danger zone</h3>
+      <p>At the very bottom of the Settings page is a <strong>Danger zone</strong>
+      section. It contains a single action: <strong>Reset all data</strong>. This
+      permanently deletes everything — sessions, payers, practices, rates, and your
+      passphrase. It is not needed for normal use. See
+      <a href="#reset">§14 Resetting data and uninstalling</a> if you need it.</p>
     </section>
 
     <!-- ================================================ -->
@@ -548,8 +556,81 @@
     </section>
 
     <!-- ================================================ -->
+    <section class="guide-section" id="reset">
+      <h2>14. Resetting data and uninstalling</h2>
+
+      <div class="warn-box">
+        <strong>Warning: this is permanent.</strong> Resetting deletes all your
+        sessions, payers, practices, rates, and your passphrase. There is no
+        undo and no recovery. Make sure you have exported a spreadsheet copy of
+        your data before you continue.
+      </div>
+
+      <h3>When would you reset?</h3>
+      <p>Reset if you want to start completely fresh — for example, if you want
+      to change your passphrase (currently no change-passphrase option exists),
+      or if you're done using Tallywell and want to remove your data before
+      uninstalling.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/reset.png" alt="Tallywell reset page showing a red warning, a list of what gets deleted, and a confirmation field requiring the word RESET">
+        <figcaption>The reset page — type RESET exactly to confirm. There is no undo.</figcaption>
+      </figure>
+
+      <h3>How to reset</h3>
+      <ol>
+        <li>Click <strong>Settings</strong> in the top navigation bar.</li>
+        <li>Scroll to the bottom. You'll see a <strong>Danger zone</strong>
+        section with a red-outlined button.</li>
+        <li>Click <strong>Reset all data…</strong></li>
+        <li>Read the warning page carefully. It lists exactly what will be
+        deleted and shows the path to your data files on disk.</li>
+        <li>In the confirmation box, type <strong>RESET</strong> in capital
+        letters exactly as shown, then click <strong>Delete all my data</strong>.</li>
+        <li>Tallywell returns to the first-run setup screen. You can either
+        create a new passphrase and start fresh, or close the window to stop
+        using the app.</li>
+      </ol>
+
+      <div class="tip">
+        Before resetting, go to <strong>Export</strong> in the navigation bar
+        to download a spreadsheet of all your data. Once you reset, that data
+        is gone from Tallywell — but you'll still have the spreadsheet.
+      </div>
+
+      <h3>Fully uninstalling Tallywell</h3>
+      <p>Resetting removes your data but leaves the app installed. The reset
+      page shows platform-specific steps for complete removal. Summary:</p>
+
+      <h4>macOS</h4>
+      <ol>
+        <li>Reset your data (steps above), or delete
+        <code>~/Library/Application Support/Tallywell/</code> manually in
+        Finder.</li>
+        <li>Open your <strong>Applications</strong> folder, right-click
+        <strong>Tallywell</strong>, and choose <strong>Move to Trash</strong>.</li>
+        <li>Empty the Trash.</li>
+      </ol>
+
+      <h4>Windows</h4>
+      <ol>
+        <li>Reset your data (steps above), or delete
+        <code>%APPDATA%\Tallywell\</code> manually in Explorer.</li>
+        <li>Open <strong>Settings → Apps</strong>, find Tallywell, and click
+        <strong>Uninstall</strong>.</li>
+      </ol>
+
+      <h4>Linux</h4>
+      <ol>
+        <li>Reset your data (steps above), or delete
+        <code>~/.local/share/Tallywell/</code> manually.</li>
+        <li>Delete the Tallywell binary or AppImage from wherever you placed it.</li>
+      </ol>
+    </section>
+
+    <!-- ================================================ -->
     <section class="guide-section" id="help">
-      <h2>14. Getting help</h2>
+      <h2>15. Getting help</h2>
       <p>If something isn't working as expected, you can report it on
       <a href="https://github.com/virajchitnis/Tallywell/issues">GitHub Issues</a>.
       You'll need a free GitHub account to submit a new report.</p>

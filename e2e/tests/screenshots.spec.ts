@@ -82,6 +82,13 @@ test('generate website screenshots', async ({ page }) => {
     await page.waitForSelector('form[action="/settings/payer"]');
     await shot(page, 'settings.png');
 
+    // Danger zone — reset page (shows the warning and confirmation form)
+    await page.goto(url + 'reset');
+    await page.waitForSelector('h1');
+    await shot(page, 'reset.png');
+    await page.goto(url + 'settings');
+    await page.waitForSelector('h1');
+
     // Rates: fill form for first payer, screenshot before submitting
     await page.goto(url + 'rates');
     await page.selectOption('select[name="payer_id"]', { label: 'HealthBridge' });
