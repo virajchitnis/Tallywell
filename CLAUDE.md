@@ -42,7 +42,7 @@ golangci-lint run
 bash scripts/build-mac-app.sh
 ```
 
-**Run locally (headless, no tray):**
+**Run locally (headless, no GUI window):**
 ```bash
 TALLYWELL_NO_TRAY=1 go run .
 ```
@@ -61,7 +61,7 @@ bash scripts/install-hooks.sh
 
 ## Architecture
 
-Tallywell is a local-first, loopback-only web app: a Go HTTP server opens in the user's default browser. There is no external network traffic and no accounts. All sensitive data is encrypted at rest on disk.
+Tallywell is a local-first, loopback-only web app: a Go HTTP server serves the UI inside a native application window (WKWebView on macOS, WebKitGTK on Linux, default browser on Windows). There is no external network traffic and no accounts. All sensitive data is encrypted at rest on disk.
 
 ### Lifecycle layers (`internal/app` → `internal/secret` → `internal/store`)
 
@@ -83,7 +83,7 @@ Templates are `go:embed`ded from `internal/server/web/templates/*.html` and pars
 
 ### `main.go`
 
-Thin wiring only. Binds `127.0.0.1:0` (random port). On macOS, `tray.Run` must block the **main goroutine** (Cocoa requirement), so the HTTP server runs in a goroutine. `TALLYWELL_NO_TRAY=1` skips the tray and blocks on a `select` over SIGINT/SIGTERM and a `done` channel that the web UI Quit button closes.
+Thin wiring only. Binds `127.0.0.1:0` (random port). `gui.Open` (from `internal/gui`) returns `run` and `quit` functions; `run()` blocks the main goroutine (required by Cocoa/GTK). `TALLYWELL_NO_TRAY=1` skips the GUI window and blocks on a `select` over SIGINT/SIGTERM and a `done` channel that the web UI Quit button closes.
 
 ### Data model (`internal/model`)
 
@@ -99,13 +99,13 @@ Thin wiring only. Binds `127.0.0.1:0` (random port). On macOS, `tray.Run` must b
 
 `Write(db, path)` generates a `.xlsx` workbook using `excelize/v2`. Four sheets: Sessions, Dashboard, Tax Summary, Unmatched/Review.
 
-### System tray (`internal/tray`)
+### Native window (`internal/gui`)
 
-`fyne.io/systray` — CGO on macOS (must build on Mac), pure Win32 syscalls on Windows, appindicator CGO on Linux. The tray icon is a 22×22 "T" glyph rendered programmatically as a template icon (auto-adapts to macOS dark/light mode).
+`gui.Open(url, title)` returns `(run func(), quit func())`. On non-Windows it uses `webview/webview_go` (WKWebView on macOS, WebKitGTK on Linux); on Windows it falls back to opening the default browser. `run()` must be called on the main goroutine. `quit()` is safe to call from any goroutine and terminates the run loop. Closing the native window also terminates the run loop, so no separate quit path is needed.
 
 ### macOS .app bundle
 
-`scripts/build-mac-app.sh` builds a universal binary (arm64 + amd64 via `lipo`), generates `AppIcon.icns` from `scripts/gen-icon.go` via `sips`/`iconutil`, and writes `Info.plist` with `LSUIElement=true` (no Dock icon) and `CFBundleIconFile`. Both architectures must be built with `MACOSX_DEPLOYMENT_TARGET=11.0` so the binary runs on macOS 11+ (not just the build machine's OS version). The Intel slice requires `CGO_ENABLED=1 CC="cc -arch x86_64"`.
+`scripts/build-mac-app.sh` builds a universal binary (arm64 + amd64 via `lipo`), generates `AppIcon.icns` from `scripts/gen-icon.go` via `sips`/`iconutil`, and writes `Info.plist` with `CFBundleIconFile`. Both architectures must be built with `MACOSX_DEPLOYMENT_TARGET=11.0` so the binary runs on macOS 11+ (not just the build machine's OS version). The Intel slice requires `CGO_ENABLED=1 CC="cc -arch x86_64"`.
 
 ## Commit hygiene
 
