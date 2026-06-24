@@ -33,9 +33,9 @@ type keychainBackend interface {
 
 type realKeychain struct{}
 
-func (realKeychain) Get(s, a string) (string, error)    { return keyring.Get(s, a) }
-func (realKeychain) Set(s, a, v string) error           { return keyring.Set(s, a, v) }
-func (realKeychain) Delete(s, a string) error           { return keyring.Delete(s, a) }
+func (realKeychain) Get(s, a string) (string, error) { return keyring.Get(s, a) }
+func (realKeychain) Set(s, a, v string) error        { return keyring.Set(s, a, v) }
+func (realKeychain) Delete(s, a string) error        { return keyring.Delete(s, a) }
 
 // Phase is the lifecycle state of the app.
 type Phase int
