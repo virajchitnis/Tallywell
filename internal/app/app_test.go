@@ -94,3 +94,57 @@ func TestBackupRequiresUnlock(t *testing.T) {
 		t.Errorf("backup while unlocked: %v", err)
 	}
 }
+
+func TestReset(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+
+	st, _ := a.Store()
+	_ = st.PutPractice(model.Practice{ID: "p1", Name: "Own", Kind: model.PracticeOwn})
+
+	if err := a.Reset(); err != nil {
+		t.Fatalf("Reset: %v", err)
+	}
+
+	// Phase must be NeedsSetup after reset.
+	if a.Phase() != PhaseNeedsSetup {
+		t.Fatalf("phase after reset = %v, want NeedsSetup", a.Phase())
+	}
+
+	// Data files must be gone.
+	if a.Dir() == "" {
+		t.Fatal("Dir() returned empty string")
+	}
+
+	// A fresh App over the same dir sees no envelope (first-run state).
+	a2, err := New(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a2.Phase() != PhaseNeedsSetup {
+		t.Fatalf("reopened phase after reset = %v, want NeedsSetup", a2.Phase())
+	}
+
+	// Can set up again with a new passphrase after reset.
+	if err := a2.Setup("newpassphrase"); err != nil {
+		t.Fatalf("Setup after reset: %v", err)
+	}
+	if a2.Phase() != PhaseUnlocked {
+		t.Fatalf("phase after re-setup = %v, want Unlocked", a2.Phase())
+	}
+}
+
+func TestResetWhileLocked(t *testing.T) {
+	dir := t.TempDir()
+	a, _ := New(dir)
+	_ = a.Setup("pw")
+	_ = a.Lock()
+
+	if err := a.Reset(); err != nil {
+		t.Fatalf("Reset while locked: %v", err)
+	}
+	if a.Phase() != PhaseNeedsSetup {
+		t.Fatalf("phase after reset-while-locked = %v, want NeedsSetup", a.Phase())
+	}
+}

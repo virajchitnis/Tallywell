@@ -89,6 +89,8 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /settings/payer", s.guard(s.handleAddPayer))
 	s.mux.HandleFunc("GET /import", s.guard(s.handleImport))
 	s.mux.HandleFunc("GET /export", s.guard(s.handleExport))
+	s.mux.HandleFunc("GET /reset", s.guard(s.handleResetForm))
+	s.mux.HandleFunc("POST /reset", s.guard(s.handleReset))
 	s.mux.HandleFunc("POST /quit", s.guard(s.handleQuit))
 }
 

@@ -162,6 +162,29 @@ func (a *App) Store() (*store.Store, error) {
 	return a.store, nil
 }
 
+// Dir returns the data directory for this app instance.
+func (a *App) Dir() string { return a.dir }
+
+// Reset permanently deletes all data and returns the app to the first-run state.
+// The store is closed, the DEK is wiped from memory, and both the envelope and
+// snapshot files are removed from disk. The caller should clear the session.
+func (a *App) Reset() error {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.store != nil {
+		_ = a.store.Close()
+		a.store = nil
+	}
+	for i := range a.dek {
+		a.dek[i] = 0
+	}
+	a.dek = nil
+	a.env = nil
+	_ = os.Remove(a.snapshotPath())
+	_ = os.Remove(a.envelopePath())
+	return nil
+}
+
 // Backup writes an encrypted snapshot to path using the in-memory DEK.
 func (a *App) Backup(path string) error {
 	a.mu.Lock()

@@ -51,4 +51,11 @@ is pre-filled — this is your own configuration.</p>
   {{else}}<p class="muted">No payers yet.</p>{{end}}
 </section>
 {{end}}
+
+<section class="card danger-zone">
+  <h2>Danger zone</h2>
+  <p class="muted">Permanent actions that cannot be undone.</p>
+  <a href="/reset" class="btn-danger">Reset all data…</a>
+</section>
+
 {{template "shell_end" .}}{{end}}

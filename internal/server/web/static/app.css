@@ -112,3 +112,13 @@ button, .primary, .secondary {
 .primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
 .secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 .actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+.flash-warn { background: #fff3e0; color: var(--warn); }
+@media (prefers-color-scheme: dark) { .flash-warn { background: #2e1f0a; } }
+.danger-zone { border-color: var(--warn); }
+.danger-zone h2 { color: var(--warn); }
+.btn-danger {
+  font: inherit; cursor: pointer; border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem; text-decoration: none; display: inline-block;
+  background: none; border: 1px solid var(--warn); color: var(--warn);
+}
+.btn-danger:hover { background: var(--warn); color: #fff; }

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"runtime"
 	"sort"
 	"time"
 
@@ -302,6 +303,34 @@ func (s *Server) handleQuit(w http.ResponseWriter, r *http.Request) {
 			s.quit()
 		}()
 	}
+}
+
+// --- reset / uninstall ---
+
+type resetView struct {
+	DataDir  string
+	Platform string // "darwin" | "windows" | "linux"
+}
+
+func (s *Server) handleResetForm(w http.ResponseWriter, r *http.Request) {
+	s.render(w, "reset.html", pageData{
+		Active:  "settings",
+		Content: resetView{DataDir: s.app.Dir(), Platform: runtime.GOOS},
+	})
+}
+
+func (s *Server) handleReset(w http.ResponseWriter, r *http.Request) {
+	if r.FormValue("confirm") != "RESET" {
+		s.render(w, "reset.html", pageData{
+			Active:  "settings",
+			Flash:   "Type RESET in capital letters to confirm.",
+			Content: resetView{DataDir: s.app.Dir(), Platform: runtime.GOOS},
+		})
+		return
+	}
+	_ = s.app.Reset()
+	s.clearSession()
+	http.Redirect(w, r, "/setup", http.StatusSeeOther)
 }
 
 // --- import (Phase 2 placeholder) / export ---

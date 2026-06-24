@@ -1,0 +1,69 @@
+{{define "reset.html"}}{{template "shell_start" .}}
+<h1>Reset all data</h1>
+
+<div class="flash flash-warn">
+  <strong>This will permanently delete everything.</strong>
+  All sessions, payers, practices, rates, and your passphrase will be erased
+  from this computer. There is no undo.
+</div>
+
+{{if .Flash}}<div class="flash flash-warn">{{.Flash}}</div>{{end}}
+
+<section class="card">
+  <h2>What gets deleted</h2>
+  <ul>
+    <li>All sessions and payment records</li>
+    <li>All payers, practices, and rates</li>
+    <li>Your encrypted data file and passphrase envelope</li>
+  </ul>
+  <p class="muted">Data directory: <code>{{with .Content}}{{.DataDir}}{{end}}</code></p>
+  <p class="muted">After resetting, Tallywell will open the first-run setup screen
+  so you can start fresh with a new passphrase.</p>
+</section>
+
+<section class="card">
+  <h2>Confirm reset</h2>
+  <p>Type <strong>RESET</strong> in the box below, then click the button.</p>
+  <form method="post" action="/reset" class="stack">
+    <label>
+      Confirmation
+      <input type="text" name="confirm" placeholder="RESET" autocomplete="off" autofocus>
+    </label>
+    <div class="actions">
+      <button type="submit" class="btn-danger">Delete all my data</button>
+      <a href="/settings" class="secondary">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Fully uninstall Tallywell</h2>
+  <p class="muted">Resetting removes your data but leaves the app installed.
+  To remove Tallywell completely:</p>
+  {{with .Content}}
+  {{if eq .Platform "darwin"}}
+  <ol>
+    <li>Click <strong>Delete all my data</strong> above (or delete
+    <code>{{.DataDir}}</code> manually in Finder).</li>
+    <li>Open your <strong>Applications</strong> folder, right-click
+    <strong>Tallywell</strong>, and choose <strong>Move to Trash</strong>.</li>
+    <li>Empty the Trash.</li>
+  </ol>
+  {{else if eq .Platform "windows"}}
+  <ol>
+    <li>Click <strong>Delete all my data</strong> above (or delete
+    <code>{{.DataDir}}</code> manually in Explorer).</li>
+    <li>Open <strong>Settings → Apps</strong>, find Tallywell, and click
+    <strong>Uninstall</strong>.</li>
+  </ol>
+  {{else}}
+  <ol>
+    <li>Click <strong>Delete all my data</strong> above (or delete
+    <code>{{.DataDir}}</code> manually).</li>
+    <li>Delete the Tallywell binary or AppImage from wherever you placed it.</li>
+  </ol>
+  {{end}}
+  {{end}}
+</section>
+
+{{template "shell_end" .}}{{end}}

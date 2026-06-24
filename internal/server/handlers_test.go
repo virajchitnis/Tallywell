@@ -197,6 +197,57 @@ func TestAddPayerMissingPracticeRedirects(t *testing.T) {
 	}
 }
 
+// --- reset ---
+
+func TestResetFormRendered(t *testing.T) {
+	e := unlocked(t)
+	got := body(t, e.get(t, "/reset"))
+	if !strings.Contains(got, "Reset all data") {
+		t.Errorf("reset form not rendered: %.120s", got)
+	}
+	if !strings.Contains(got, "RESET") {
+		t.Errorf("reset form missing confirmation prompt: %.120s", got)
+	}
+}
+
+func TestResetWrongConfirmationShowsError(t *testing.T) {
+	e := unlocked(t)
+	got := body(t, e.post(t, "/reset", url.Values{"confirm": {"reset"}})) // lowercase
+	if !strings.Contains(got, "capital letters") {
+		t.Errorf("expected validation error, got: %.120s", got)
+	}
+	// App must still be unlocked — data not deleted.
+	if got2 := body(t, e.get(t, "/")); !strings.Contains(got2, "Here's where things stand") {
+		t.Errorf("app should still be unlocked after bad confirm: %.120s", got2)
+	}
+}
+
+func TestResetCorrectConfirmationWipesDataAndRedirectsToSetup(t *testing.T) {
+	e := newTestEnv(t)
+	e.post(t, "/setup", url.Values{"passphrase": {"hunter2hunter2"}, "confirm": {"hunter2hunter2"}})
+
+	// Add some data so we can confirm it's gone.
+	e.post(t, "/settings/practice", url.Values{"name": {"My Practice"}, "kind": {"own"}})
+	st, _ := e.srv.app.Store()
+	prs, _ := st.Practices()
+	if len(prs) != 1 {
+		t.Fatalf("expected 1 practice before reset, got %d", len(prs))
+	}
+
+	resp := e.post(t, "/reset", url.Values{"confirm": {"RESET"}})
+	if resp.Request.URL.Path != "/setup" {
+		t.Errorf("expected redirect to /setup after reset, got %s", resp.Request.URL.Path)
+	}
+	if got := body(t, resp); !strings.Contains(got, "Create a passphrase") {
+		t.Errorf("expected setup page after reset, got: %.120s", got)
+	}
+
+	// Session is cleared — guarded routes redirect to unlock/setup.
+	if got := body(t, e.get(t, "/")); strings.Contains(got, "Here's where things stand") {
+		t.Error("dashboard accessible after reset — session should have been cleared")
+	}
+}
+
 // --- guard: invalid session cookie ---
 
 func TestGuardRejectsInvalidSession(t *testing.T) {
