@@ -46,10 +46,10 @@ iconutil -c icns "$ICONSET" -o "dist/${APP}.icns"
 # ── Binaries ──────────────────────────────────────────────────────────────────
 
 echo "==> Building arm64 (Apple Silicon)"
-go build -o "${MACOS}/${APP}-arm64" .
+MACOSX_DEPLOYMENT_TARGET=11.0 go build -o "${MACOS}/${APP}-arm64" .
 
 echo "==> Building amd64 (Intel)"
-CGO_ENABLED=1 CC="cc -arch x86_64" GOARCH=amd64 go build -o "${MACOS}/${APP}-amd64" .
+MACOSX_DEPLOYMENT_TARGET=11.0 CGO_ENABLED=1 CC="cc -arch x86_64" GOARCH=amd64 go build -o "${MACOS}/${APP}-amd64" .
 
 echo "==> Creating universal binary with lipo"
 lipo -create \
