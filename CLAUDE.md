@@ -4,10 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Go is not installed system-wide; use the local binary:
-```bash
-export PATH="/Users/viraj/Scripting/go/bin:$PATH"
-```
+Go may not be on `PATH`. Find it with `which go` or `go env GOROOT`, then prefix commands or add it to your shell profile. On this machine it lives outside the default PATH; run `export PATH="$(go env GOROOT)/bin:$PATH"` if needed.
 
 **Test (all):**
 ```bash
