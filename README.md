@@ -18,7 +18,7 @@ for you and shows the result in one calm dashboard.
 ## How it works
 
 - A single, self-contained binary. Double-click it; it opens in its own native
-  application window — no browser required. Nothing is exposed to the network.
+  application window. Nothing is exposed to the network.
 - Add sessions manually, or import a payer's CSV export. Tallywell normalizes the
   different formats, matches sessions to payouts, and flags what's outstanding.
 - Export a clean spreadsheet (`.xlsx`) any time — for your own records or your
