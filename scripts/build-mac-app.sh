@@ -11,17 +11,39 @@ cd "$repo_root"
 
 APP="Tallywell"
 BUNDLE_ID="io.tallywell.tallywell"
-# Read version from git tag if available, fall back to "dev".
 VERSION="$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "dev")"
 
 APP_DIR="dist/${APP}.app"
 CONTENTS="${APP_DIR}/Contents"
 MACOS="${CONTENTS}/MacOS"
 RESOURCES="${CONTENTS}/Resources"
+ICONSET="dist/${APP}.iconset"
 
 echo "==> Cleaning previous build"
-rm -rf "$APP_DIR"
-mkdir -p "$MACOS" "$RESOURCES"
+rm -rf "$APP_DIR" "$ICONSET" dist/tallywell-icon-1024.png "dist/${APP}.icns"
+mkdir -p "$MACOS" "$RESOURCES" "$ICONSET"
+
+# ── Icon ──────────────────────────────────────────────────────────────────────
+
+echo "==> Generating icon (1024×1024)"
+go run scripts/gen-icon.go
+
+echo "==> Building iconset (all macOS sizes)"
+# sips resizes the 1024px source; iconutil assembles the .icns.
+make_size() { sips -z "$1" "$1" dist/tallywell-icon-1024.png --out "${ICONSET}/$2" >/dev/null; }
+make_size 16   icon_16x16.png
+make_size 32   "icon_16x16@2x.png"
+make_size 32   icon_32x32.png
+make_size 64   "icon_32x32@2x.png"
+make_size 128  icon_128x128.png
+make_size 256  "icon_128x128@2x.png"
+make_size 256  icon_256x256.png
+make_size 512  "icon_256x256@2x.png"
+make_size 512  icon_512x512.png
+make_size 1024 "icon_512x512@2x.png"
+iconutil -c icns "$ICONSET" -o "dist/${APP}.icns"
+
+# ── Binaries ──────────────────────────────────────────────────────────────────
 
 echo "==> Building arm64 (Apple Silicon)"
 go build -o "${MACOS}/${APP}-arm64" .
@@ -37,7 +59,11 @@ lipo -create \
 rm "${MACOS}/${APP}-arm64" "${MACOS}/${APP}-amd64"
 chmod +x "${MACOS}/${APP}"
 
-echo "==> Writing Info.plist"
+# ── Bundle metadata ───────────────────────────────────────────────────────────
+
+echo "==> Copying icon and writing Info.plist"
+cp "dist/${APP}.icns" "${RESOURCES}/AppIcon.icns"
+
 cat > "${CONTENTS}/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -51,14 +77,15 @@ cat > "${CONTENTS}/Info.plist" <<PLIST
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
   <key>CFBundleExecutable</key>       <string>${APP}</string>
   <key>CFBundlePackageType</key>      <string>APPL</string>
+  <key>CFBundleIconFile</key>         <string>AppIcon</string>
   <key>NSHighResolutionCapable</key>  <true/>
   <key>LSUIElement</key>              <true/>
 </dict>
 </plist>
 PLIST
 
-# Strip quarantine so macOS Gatekeeper does not block on the recipient's Mac.
-# (AirDrop between personal Macs does not re-add it.)
+# Strip quarantine so macOS Gatekeeper does not block on the recipient's Mac
+# when sent via AirDrop between personal Macs.
 xattr -cr "$APP_DIR" 2>/dev/null || true
 
 echo ""
