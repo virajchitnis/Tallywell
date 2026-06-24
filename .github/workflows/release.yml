@@ -116,7 +116,7 @@ jobs:
           path: dist/
 
       - name: Install Linux WebKitGTK runtime
-        run: sudo apt-get update -q && sudo apt-get install -y libwebkit2gtk-4.0-0
+        run: sudo apt-get update -q && sudo apt-get install -y libwebkit2gtk-4.1-0
 
       - name: Make binary executable
         run: chmod +x dist/tallywell-linux-amd64
