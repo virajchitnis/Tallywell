@@ -42,8 +42,8 @@ func main() {
 		gap   = 84  // centre-to-centre spacing
 	)
 	groupW := 3*gap + markW
-	startX := (size-groupW)/2
-	startY := (size-markH)/2
+	startX := (size - groupW) / 2
+	startY := (size - markH) / 2
 
 	// Four vertical tally bars.
 	for i := 0; i < 4; i++ {
