@@ -43,7 +43,9 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y libayatana-appindicator3-dev nsis imagemagick icoutils
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            nsis imagemagick icoutils
 
       - name: Build Windows and Linux binaries
         run: |
@@ -107,8 +109,8 @@ jobs:
           name: dist-other
           path: dist/
 
-      - name: Install Linux systray runtime dependency
-        run: sudo apt-get update -q && sudo apt-get install -y libayatana-appindicator3-dev
+      - name: Install Linux WebKitGTK runtime
+        run: sudo apt-get update -q && sudo apt-get install -y libwebkit2gtk-4.0-0
 
       - name: Make binary executable
         run: chmod +x dist/tallywell-linux-amd64

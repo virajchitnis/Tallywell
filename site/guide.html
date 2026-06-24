@@ -129,19 +129,14 @@
         <li>Click <strong>Linux (AppImage)</strong> on the download page.</li>
         <li>Open a Terminal, navigate to your Downloads folder, and run:<br>
         <code>chmod +x Tallywell.AppImage &amp;&amp; ./Tallywell.AppImage</code></li>
-        <li>Tallywell opens in your default browser.</li>
+        <li>Tallywell opens in its own window.</li>
       </ol>
 
       <div class="tip">
-        The AppImage uses your system's tray library for the menu-bar icon.
-        On Ubuntu and most GNOME desktops this is already installed. If you
-        do not see a tray icon, Tallywell still works normally in the browser —
-        use the <strong>Quit</strong> button inside the app to stop it.
-      </div>
-
-      <div class="tip">
-        Tallywell runs as a small local server on your computer and opens in your
-        browser. The browser is just the window — no data is sent to the internet.
+        The AppImage requires <strong>WebKitGTK</strong> (<code>libwebkit2gtk-4.0-0</code>
+        on Ubuntu/Debian, <code>webkit2gtk</code> on Arch, <code>webkit2gtk3</code>
+        on Fedora). It is usually already present on GTK-based desktops.
+        If missing: <code>sudo apt install libwebkit2gtk-4.0-0</code>.
       </div>
     </section>
 

@@ -92,9 +92,10 @@
       <code>chmod +x Tallywell.AppImage &amp;&amp; ./Tallywell.AppImage</code></li>
       <li>Tallywell opens in your default browser.</li>
     </ol>
-    <p class="muted">The AppImage requires <strong>libayatana-appindicator3</strong>
-    for the system-tray icon. It is pre-installed on Ubuntu and most GNOME desktops.
-    If the tray icon does not appear, Tallywell still runs normally in the browser.</p>
+    <p class="muted">The AppImage requires <strong>libwebkit2gtk-4.0</strong> (WebKitGTK)
+    to display its window. This library is available on most Linux distributions:
+    <code>sudo apt install libwebkit2gtk-4.0-0</code> on Ubuntu/Debian,
+    <code>webkit2gtk</code> on Arch, <code>webkit2gtk3</code> on Fedora.</p>
   </section>
 
   <section>

@@ -79,7 +79,7 @@ cat > "${CONTENTS}/Info.plist" <<PLIST
   <key>CFBundlePackageType</key>      <string>APPL</string>
   <key>CFBundleIconFile</key>         <string>AppIcon</string>
   <key>NSHighResolutionCapable</key>  <true/>
-  <key>LSUIElement</key>              <true/>
+  <key>LSMinimumSystemVersion</key>   <string>11.0</string>
 </dict>
 </plist>
 PLIST
