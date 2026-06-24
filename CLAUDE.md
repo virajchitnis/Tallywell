@@ -99,6 +99,10 @@ Thin wiring only. Binds `127.0.0.1:0` (random port). `gui.Open` (from `internal/
 
 `Write(db, path)` generates a `.xlsx` workbook using `excelize/v2`. Four sheets: Sessions, Dashboard, Tax Summary, Unmatched/Review.
 
+### Linux CGO build dependency
+
+Linux builds require `libwebkit2gtk-4.1-dev` (Ubuntu 24.04+/Debian) for WebKitGTK. Ubuntu 24.04 dropped the `4.0` package; CI works around this by installing `4.1` and writing a `webkit2gtk-4.0.pc` compat shim so `webview/webview_go`'s CGO directive resolves correctly. The runtime package is `libwebkit2gtk-4.1-0`.
+
 ### Native window (`internal/gui`)
 
 `gui.Open(url, title)` returns `(run func(), quit func())`. On non-Windows it uses `webview/webview_go` (WKWebView on macOS, WebKitGTK on Linux); on Windows it falls back to opening the default browser. `run()` must be called on the main goroutine. `quit()` is safe to call from any goroutine and terminates the run loop. Closing the native window also terminates the run loop, so no separate quit path is needed.

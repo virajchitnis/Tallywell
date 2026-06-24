@@ -17,12 +17,13 @@ for you and shows the result in one calm dashboard.
 
 ## How it works
 
-- A single, self-contained binary. Double-click it; it opens a private page in
-  your browser at `localhost`. Nothing is exposed to the network.
+- A single, self-contained binary. Double-click it; it opens in its own native
+  application window — no browser required. Nothing is exposed to the network.
 - Add sessions manually, or import a payer's CSV export. Tallywell normalizes the
   different formats, matches sessions to payouts, and flags what's outstanding.
 - Export a clean spreadsheet (`.xlsx`) any time — for your own records or your
   accountant.
+- Adapts to your system's **light or dark mode** automatically.
 
 ## Privacy & security
 
@@ -39,9 +40,28 @@ Early development. See [ROADMAP.md](ROADMAP.md) for what's planned.
 
 ## Building
 
-Requires Go 1.25+. `go build ./...`. A server-agnostic remote-Docker build helper
-is in `scripts/remote-build.sh` (see that file for the environment variables it
-reads).
+Requires Go 1.25+. The UI runs inside a native WebView window (WKWebView on
+macOS, WebKitGTK on Linux), so CGO is required on non-Windows platforms.
+
+```bash
+go build ./...
+```
+
+To build the macOS `.app` bundle and DMG (must run on a Mac):
+
+```bash
+bash scripts/build-mac-app.sh
+```
+
+Linux builds require `libwebkit2gtk-4.1-dev` (Ubuntu/Debian) or the equivalent
+for your distribution. Windows builds use `CGO_ENABLED=0` and open the default
+browser as a fallback.
+
+To run locally without the native window (headless mode, useful for testing):
+
+```bash
+TALLYWELL_NO_TRAY=1 go run .
+```
 
 ## License
 

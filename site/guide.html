@@ -73,6 +73,9 @@
       <p><strong>Your data never leaves your computer.</strong> There is no server,
       no account, no cloud sync. Everything is stored locally, encrypted with your
       passphrase. No one else — not even the developer — can access your data.</p>
+      <p><strong>Native app, not a browser tab.</strong> Tallywell opens in its
+      own window, just like any other app on your computer. It follows your
+      system's light or dark mode automatically.</p>
       <p><strong>Free, always.</strong> No subscription, no trial period, no
       premium tier. Tallywell is open-source (MIT license).</p>
     </section>
@@ -116,7 +119,7 @@
         <strong>Run anyway</strong>.</li>
         <li>Follow the short installer (Next → Next → Install). At the end,
         click <strong>Launch Tallywell</strong>, or find it in your Start Menu.</li>
-        <li>Tallywell opens in your default browser.</li>
+        <li>Tallywell opens in its own window.</li>
       </ol>
 
       <div class="tip">
@@ -133,10 +136,9 @@
       </ol>
 
       <div class="tip">
-        The AppImage requires <strong>WebKitGTK</strong> (<code>libwebkit2gtk-4.0-0</code>
-        on Ubuntu/Debian, <code>webkit2gtk</code> on Arch, <code>webkit2gtk3</code>
-        on Fedora). It is usually already present on GTK-based desktops.
-        If missing: <code>sudo apt install libwebkit2gtk-4.0-0</code>.
+        The AppImage requires <strong>WebKitGTK 4.1</strong>. On Ubuntu 24.04+/Debian:
+        <code>sudo apt install libwebkit2gtk-4.1-0</code>. On Arch: <code>webkit2gtk-4.1</code>.
+        On Fedora: <code>webkit2gtk4.1</code>. Most GTK-based desktops already have it installed.
       </div>
     </section>
 
@@ -178,7 +180,7 @@
       </figure>
 
       <p>Enter your passphrase and click <strong>Unlock</strong>. If you type the
-      wrong passphrase, you'll see "Incorrect passphrase." — check that Caps Lock
+      wrong passphrase you'll see "Incorrect passphrase." — check that Caps Lock
       is off and try again.</p>
 
       <figure class="screenshot">
@@ -188,7 +190,7 @@
 
       <h3>Auto-lock</h3>
       <p>For security, Tallywell automatically locks after <strong>15 minutes of
-      inactivity</strong>, even if the browser tab stays open. When that happens,
+      inactivity</strong>, even if the window stays open. When that happens,
       you'll be taken back to the unlock screen. This protects client data if you
       step away from your computer.</p>
       <p>You can also lock the app at any time by clicking the <strong>Lock</strong>
@@ -462,12 +464,12 @@
 
       <figure class="screenshot">
         <img src="screenshots/nav-bar.png" alt="Tallywell navigation bar showing Home, Sessions, Rates, Import, Settings, Export, Lock, and Quit">
-        <figcaption>The navigation bar — Lock clears your data from memory; Quit shuts down the app entirely.</figcaption>
+        <figcaption>The navigation bar — Lock clears your data from memory; Quit (or closing the window) shuts down the app entirely.</figcaption>
       </figure>
 
       <h3>Auto-lock</h3>
       <p>The app locks automatically after 15 minutes of inactivity, even if the
-      browser tab is open. This meets HIPAA's automatic logoff requirement. When
+      window is open. This meets HIPAA's automatic logoff requirement. When
       you return, enter your passphrase to continue where you left off.</p>
 
       <h3>Tips for keeping data secure</h3>
@@ -494,16 +496,15 @@
     <!-- ================================================ -->
     <section class="guide-section" id="quit">
       <h2>12. Quitting Tallywell</h2>
-      <p>Click <strong>Quit</strong> in the top navigation bar (next to the Lock
-      button). This shuts down the Tallywell server cleanly and stops the app.</p>
-      <p>All your data is saved automatically every time you make a change. There
-      is no Save button — if you see data on screen, it's already saved.</p>
-
-      <div class="warn-box">
-        <strong>Don't just close the browser tab.</strong> Closing the tab hides
-        the window but leaves the Tallywell server running in the background.
-        Always use the <strong>Quit</strong> button to fully stop the app.
-      </div>
+      <p>There are two ways to quit:</p>
+      <ul>
+        <li>Click <strong>Quit</strong> in the top navigation bar.</li>
+        <li>Close the window using the red close button (or press
+        <strong>⌘Q</strong> on macOS).</li>
+      </ul>
+      <p>Both stop the app completely. All your data is saved automatically every
+      time you make a change — there is no Save button. If you see data on screen,
+      it's already saved.</p>
     </section>
 
     <!-- ================================================ -->
