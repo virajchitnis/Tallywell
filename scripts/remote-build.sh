@@ -6,8 +6,12 @@
 #
 # NOTE: macOS binaries are NOT built here — fyne.io/systray (the menu-bar icon
 # library) requires CGO on macOS, which cannot cross-compile from Linux. macOS
-# binaries are built on a macOS runner in CI (release.yml) or locally on a Mac
-# with `go build .`. This script covers windows/amd64 and linux/amd64 only.
+# binaries are built on a macOS runner in CI (release.yml) or locally on a Mac:
+#
+#   go build -o dist/tallywell-darwin-arm64 .                          # Apple Silicon
+#   CC="cc -arch x86_64" GOARCH=amd64 go build -o dist/tallywell-darwin-amd64 .  # Intel
+#
+# This script covers windows/amd64 and linux/amd64 only.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
