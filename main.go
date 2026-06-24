@@ -1,10 +1,10 @@
 // Command tallywell runs the local web app: it binds to loopback only, opens
-// the default browser, shows a system-tray icon, and serves the UI until the
-// user clicks Quit (in the nav bar or the tray menu). All logic lives in
-// internal/*; this file is thin wiring.
+// a native application window (WKWebView on macOS, WebKitGTK on Linux, default
+// browser on Windows), and serves the UI until the user closes the window or
+// clicks Quit. All logic lives in internal/*; this file is thin wiring.
 //
-// Set TALLYWELL_NO_TRAY=1 to skip the system-tray icon and run in terminal
-// mode instead (useful for headless environments and integration tests).
+// Set TALLYWELL_NO_TRAY=1 to skip the GUI window and run in headless mode
+// (useful for E2E tests and other non-interactive environments).
 package main
 
 import (
@@ -14,16 +14,15 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"runtime"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/tallywell/tallywell/internal/app"
+	"github.com/tallywell/tallywell/internal/gui"
 	"github.com/tallywell/tallywell/internal/server"
-	"github.com/tallywell/tallywell/internal/tray"
 )
 
 func main() {
@@ -48,8 +47,6 @@ func main() {
 	url := fmt.Sprintf("http://%s/", ln.Addr().String())
 	fmt.Printf("Tallywell is running at %s\n", url)
 
-	// Serve in a goroutine so the main goroutine is free for the tray (macOS
-	// requires Cocoa UI on the main thread).
 	httpSrv := &http.Server{Handler: srv.Handler()}
 	go func() {
 		if err := httpSrv.Serve(ln); err != nil && err != http.ErrServerClosed {
@@ -63,23 +60,12 @@ func main() {
 		_ = httpSrv.Shutdown(ctx)
 	}
 
-	noTray := os.Getenv("TALLYWELL_NO_TRAY") == "1"
+	if os.Getenv("TALLYWELL_NO_TRAY") == "1" {
+		// Headless mode: block until Ctrl-C, SIGTERM, or web UI Quit.
+		done := make(chan struct{})
+		var once sync.Once
+		srv.SetQuitFunc(func() { once.Do(func() { close(done) }) })
 
-	// done is closed when the web UI Quit button is clicked in headless mode.
-	done := make(chan struct{})
-	srv.SetQuitFunc(func() {
-		if noTray {
-			// Unblock the signal-select below so main can call shutdown.
-			close(done)
-		} else {
-			tray.Quit() // triggers onQuit → shutdown via tray.Run callback
-		}
-	})
-
-	openBrowser(url)
-
-	if noTray {
-		// Terminal / headless mode: block until Ctrl-C, SIGTERM, or web UI Quit.
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 		select {
@@ -90,8 +76,12 @@ func main() {
 		return
 	}
 
-	// tray.Run blocks until the user quits via the tray menu or web UI Quit.
-	tray.Run(url, openBrowser, shutdown)
+	// GUI mode: native window. run blocks the main goroutine (required on macOS
+	// by Cocoa/WKWebView; on Linux by GTK). quit closes the window from any goroutine.
+	run, quit := gui.Open(url, "Tallywell")
+	srv.SetQuitFunc(quit)
+	run()
+	shutdown()
 }
 
 // dataDir returns the per-user local data directory for Tallywell. On macOS
@@ -102,22 +92,4 @@ func dataDir() (string, error) {
 		return "", err
 	}
 	return filepath.Join(base, "Tallywell"), nil
-}
-
-// openBrowser best-effort opens url in the user's default browser.
-func openBrowser(url string) {
-	var cmd string
-	var args []string
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = "open"
-		args = []string{url}
-	case "windows":
-		cmd = "rundll32"
-		args = []string{"url.dll,FileProtocolHandler", url}
-	default:
-		cmd = "xdg-open"
-		args = []string{url}
-	}
-	_ = exec.Command(cmd, args...).Start()
 }
