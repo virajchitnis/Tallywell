@@ -30,6 +30,7 @@
         <li><a href="#install">Installing</a></li>
         <li><a href="#first-launch">First launch</a></li>
         <li><a href="#unlock">Unlocking daily</a></li>
+        <li><a href="#auto-unlock">Auto-unlock (optional)</a></li>
         <li><a href="#settings">Setting up your account</a></li>
         <li><a href="#rates">Setting rates</a></li>
         <li><a href="#sessions">Logging sessions</a></li>
@@ -206,8 +207,57 @@
     </section>
 
     <!-- ================================================ -->
+    <section class="guide-section" id="auto-unlock">
+      <h2>5. Auto-unlock (optional)</h2>
+      <p>By default, Tallywell asks for your passphrase every time it opens.
+      If your computer already has full-disk encryption enabled — FileVault on
+      macOS, BitLocker on Windows, or dm-crypt/LUKS on Linux — you can enable
+      <strong>auto-unlock</strong> so Tallywell opens straight to the dashboard
+      without a passphrase prompt.</p>
+
+      <div class="tip">
+        Auto-unlock stores a random key in your <strong>system keychain</strong>
+        (macOS Keychain, Windows Credential Manager, or the Linux Secret
+        Service). Your data stays fully AES-256-GCM encrypted on disk.
+        Your passphrase continues to work at any time as a fallback.
+      </div>
+
+      <h3>Enabling auto-unlock</h3>
+      <ol>
+        <li>Make sure full-disk encryption is on:
+          <ul>
+            <li><strong>macOS:</strong> System Settings → Privacy &amp; Security → FileVault → Turn On</li>
+            <li><strong>Windows:</strong> Settings → System → BitLocker drive encryption</li>
+            <li><strong>Linux:</strong> set up during installation (dm-crypt/LUKS)</li>
+          </ul>
+        </li>
+        <li>Open Tallywell and unlock with your passphrase.</li>
+        <li>Go to <strong>Settings</strong> and find the <strong>Auto-unlock</strong> section.</li>
+        <li>Click <strong>Enable auto-unlock</strong>.</li>
+      </ol>
+      <p>From now on, Tallywell will open directly to the dashboard. If the
+      keychain is ever unavailable (for example, immediately after a system
+      restart before you log in), Tallywell falls back to the passphrase form
+      automatically.</p>
+
+      <h3>Disabling auto-unlock</h3>
+      <p>Go to <strong>Settings → Auto-unlock</strong> and click
+      <strong>Disable auto-unlock</strong>. Tallywell will ask for your
+      passphrase again at every launch. The key is removed from the keychain
+      immediately.</p>
+
+      <div class="warn-box">
+        <strong>Not recommended without full-disk encryption.</strong> If your
+        disk is not encrypted and someone copies your data files, they could
+        also copy the keychain entry and access your data without the
+        passphrase. With FileVault or BitLocker on, the keychain is protected
+        by the same disk encryption as the data files.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
     <section class="guide-section" id="settings">
-      <h2>5. Setting up your account</h2>
+      <h2>6. Setting up your account</h2>
       <p>Before you can log sessions, tell Tallywell about the practices you work
       in and the payers who pay you. Click <strong>Settings</strong> in the top
       navigation bar.</p>
@@ -262,12 +312,12 @@
       section. It contains a single action: <strong>Reset all data</strong>. This
       permanently deletes everything — sessions, payers, practices, rates, and your
       passphrase. It is not needed for normal use. See
-      <a href="#reset">§14 Resetting data and uninstalling</a> if you need it.</p>
+      <a href="#reset">§15 Resetting data and uninstalling</a> if you need it.</p>
     </section>
 
     <!-- ================================================ -->
     <section class="guide-section" id="rates">
-      <h2>6. Setting rates</h2>
+      <h2>7. Setting rates</h2>
       <p>Click <strong>Rates</strong> in the navigation bar. Rates tell Tallywell
       how much each payer pays per session type, so expected amounts fill in
       automatically when you log a session.</p>
@@ -311,7 +361,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="sessions">
-      <h2>7. Logging sessions</h2>
+      <h2>8. Logging sessions</h2>
       <p>Click <strong>Sessions</strong> in the navigation bar. Use the form at
       the top to log each session as it happens — or in advance for scheduled
       appointments.</p>
@@ -374,7 +424,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="dashboard">
-      <h2>8. Reading the dashboard</h2>
+      <h2>9. Reading the dashboard</h2>
       <p>Click <strong>Home</strong> in the navigation bar (or just open the app)
       to see your dashboard. It gives a real-time summary of your income across
       all payers.</p>
@@ -412,7 +462,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="import">
-      <h2>9. Importing from payer platforms (coming soon)</h2>
+      <h2>10. Importing from payer platforms (coming soon)</h2>
       <p>The Import page will let you upload CSV export files from platforms like
       Alma, Headway, and SimplePractice. Tallywell will automatically match the
       payouts to the sessions you've logged and mark sessions as paid.</p>
@@ -436,7 +486,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="export">
-      <h2>10. Exporting for your accountant</h2>
+      <h2>11. Exporting for your accountant</h2>
       <p>Click <strong>Export</strong> in the top navigation bar at any time to
       download a spreadsheet of all your data.</p>
       <p>The spreadsheet opens in Numbers (Mac), Microsoft Excel, or Google Sheets.
@@ -460,7 +510,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="security">
-      <h2>11. Locking and security</h2>
+      <h2>12. Locking and security</h2>
       <p>Tallywell protects your data with a passphrase that encrypts everything
       stored on disk. Even if someone copies your data file, they cannot read it
       without your passphrase.</p>
@@ -493,6 +543,15 @@
         before stepping out of your office, even briefly.</li>
       </ul>
 
+      <h3>Auto-unlock and security</h3>
+      <p>If you have enabled auto-unlock (see <a href="#auto-unlock">§5</a>),
+      Tallywell re-unlocks automatically after an idle timeout using your system
+      keychain. Your data is still encrypted on disk; the protection comes from
+      your OS login and full-disk encryption rather than the Tallywell
+      passphrase. If you need a stricter access control — for example, on a
+      shared computer — disable auto-unlock in Settings and rely on the
+      passphrase.</p>
+
       <div class="tip">
         Tallywell is designed for HIPAA-conscious use. Whether your specific use
         meets HIPAA requirements depends on your full set of practices — Tallywell
@@ -503,7 +562,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="quit">
-      <h2>12. Quitting Tallywell</h2>
+      <h2>13. Quitting Tallywell</h2>
       <p>There are two ways to quit:</p>
       <ul>
         <li>Click <strong>Quit</strong> in the top navigation bar.</li>
@@ -517,7 +576,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="backup">
-      <h2>13. Backing up your data</h2>
+      <h2>14. Backing up your data</h2>
       <p>Your Tallywell data lives in a single encrypted file on your computer.
       Backing it up is just copying that file somewhere safe.</p>
 
@@ -557,7 +616,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="reset">
-      <h2>14. Resetting data and uninstalling</h2>
+      <h2>15. Resetting data and uninstalling</h2>
 
       <div class="warn-box">
         <strong>Warning: this is permanent.</strong> Resetting deletes all your
@@ -630,7 +689,7 @@
 
     <!-- ================================================ -->
     <section class="guide-section" id="help">
-      <h2>15. Getting help</h2>
+      <h2>16. Getting help</h2>
       <p>If something isn't working as expected, you can report it on
       <a href="https://github.com/virajchitnis/Tallywell/issues">GitHub Issues</a>.
       You'll need a free GitHub account to submit a new report.</p>
