@@ -43,9 +43,15 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update -q
+          # Ubuntu 24.04 ships webkit2gtk-4.1; webview_go's CGO directive asks
+          # for webkit2gtk-4.0 via pkg-config. Create a compat .pc shim.
           sudo apt-get install -y \
-            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
             nsis imagemagick icoutils
+          mkdir -p /tmp/pc-compat
+          printf 'Name: webkit2gtk-4.0\nDescription: compat shim\nRequires: webkit2gtk-4.1\nVersion: 2.43.0\n' \
+            > /tmp/pc-compat/webkit2gtk-4.0.pc
+          echo "PKG_CONFIG_PATH=/tmp/pc-compat${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
 
       - name: Build Windows and Linux binaries
         run: |

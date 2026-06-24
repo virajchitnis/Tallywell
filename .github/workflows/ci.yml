@@ -21,9 +21,11 @@ jobs:
       - name: Install Linux CGO build dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            libayatana-appindicator3-dev \
-            libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev
+          mkdir -p /tmp/pc-compat
+          printf 'Name: webkit2gtk-4.0\nDescription: compat shim\nRequires: webkit2gtk-4.1\nVersion: 2.43.0\n' \
+            > /tmp/pc-compat/webkit2gtk-4.0.pc
+          echo "PKG_CONFIG_PATH=/tmp/pc-compat${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
 
       - name: gofmt
         run: |
@@ -75,9 +77,11 @@ jobs:
       - name: Install Linux CGO build dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            libayatana-appindicator3-dev \
-            libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev
+          mkdir -p /tmp/pc-compat
+          printf 'Name: webkit2gtk-4.0\nDescription: compat shim\nRequires: webkit2gtk-4.1\nVersion: 2.43.0\n' \
+            > /tmp/pc-compat/webkit2gtk-4.0.pc
+          echo "PKG_CONFIG_PATH=/tmp/pc-compat${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
       - uses: golangci/golangci-lint-action@v7
         with:
           version: v2.12.2
@@ -108,9 +112,11 @@ jobs:
       - name: Install Linux CGO build dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y \
-            libayatana-appindicator3-dev \
-            libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev
+          mkdir -p /tmp/pc-compat
+          printf 'Name: webkit2gtk-4.0\nDescription: compat shim\nRequires: webkit2gtk-4.1\nVersion: 2.43.0\n' \
+            > /tmp/pc-compat/webkit2gtk-4.0.pc
+          echo "PKG_CONFIG_PATH=/tmp/pc-compat${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
       - name: Build binary
         run: go build -o tallywell .
       - name: Install Playwright
