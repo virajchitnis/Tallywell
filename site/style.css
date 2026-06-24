@@ -46,14 +46,23 @@ body {
 .lede { font-size: 1.1rem; color: var(--text); }
 .privacy { color: var(--muted); }
 .privacy strong { color: var(--accent); }
+.hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
 .cta {
   display: inline-block;
-  margin-top: 1rem;
   background: var(--accent);
   color: #fff;
   text-decoration: none;
   padding: 0.6rem 1.4rem;
   border-radius: var(--radius);
+}
+.cta-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
 }
 main { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 2rem; }
 section {
@@ -188,13 +197,51 @@ footer {
   border: 1px solid var(--border);
   background: var(--surface);
 }
-.screenshot img { width: 100%; height: auto; display: block; }
+.screenshot img { width: 100%; height: auto; display: block; cursor: zoom-in; }
 .screenshot figcaption {
   font-size: 0.8rem;
   color: var(--muted);
   padding: 0.4rem 0.75rem;
   border-top: 1px solid var(--border);
   text-align: center;
+}
+
+/* ---- Lightbox overlay ---- */
+#img-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+#img-overlay.open { display: flex; }
+#img-overlay img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6);
+  cursor: default;
+}
+.overlay-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---- Tip / warning boxes ---- */
@@ -232,7 +279,7 @@ footer {
   overflow: hidden;
   border: 1px solid var(--border);
 }
-.preview-img img { width: 100%; height: auto; display: block; }
+.preview-img img { width: 100%; height: auto; display: block; cursor: zoom-in; }
 .preview-img figcaption {
   font-size: 0.78rem;
   color: var(--muted);
