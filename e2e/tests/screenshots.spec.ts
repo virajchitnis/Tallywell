@@ -82,6 +82,24 @@ test('generate website screenshots', async ({ page }) => {
     await page.waitForSelector('form[action="/settings/payer"]');
     await shot(page, 'settings.png');
 
+    // Auto-unlock section (disabled state — always visible regardless of keychain support)
+    await page.locator('.card:has(h2:text("Auto-unlock"))').scrollIntoViewIfNeeded();
+    await shot(page, 'settings-auto-unlock.png');
+
+    // Attempt to enable auto-unlock and capture enabled state if the OS keychain
+    // is available (succeeds on macOS; may silently fail on CI Linux without D-Bus).
+    await page.click('form[action="/settings/keychain"] button');
+    await page.waitForSelector('h1');
+    if (await page.locator('form[action="/settings/keychain"] input[value="remove"]').count() > 0) {
+      await page.locator('.card:has(h2:text("Auto-unlock"))').scrollIntoViewIfNeeded();
+      await shot(page, 'settings-auto-unlock-enabled.png');
+      // Disable again so the app returns to a known state.
+      await page.click('form[action="/settings/keychain"] button');
+      await page.waitForSelector('h1');
+    }
+    await page.goto(url + 'settings');
+    await page.waitForSelector('h1');
+
     // Danger zone — reset page (shows the warning and confirmation form)
     await page.goto(url + 'reset');
     await page.waitForSelector('h1');
