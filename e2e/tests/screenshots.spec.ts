@@ -48,11 +48,18 @@ test('generate website screenshots', async ({ page }) => {
     await page.click('button[type="submit"]');
     await page.waitForSelector('.cards');
 
-    // Unlock screen (lock first)
+    // Unlock screen (lock first, then show clean unlock)
     await page.click('form[action="/lock"] button');
     await page.waitForSelector('input[name="passphrase"]');
     await shot(page, 'unlock.png');
 
+    // Wrong passphrase — shows the error flash
+    await page.fill('input[name="passphrase"]', 'wrong-passphrase');
+    await page.click('button[type="submit"]');
+    await page.waitForSelector('.flash');
+    await shot(page, 'wrong-passphrase.png');
+
+    // Correct passphrase — unlock for real
     await page.fill('input[name="passphrase"]', 'demo-passphrase-2026');
     await page.click('button[type="submit"]');
     await page.waitForSelector('.cards');
@@ -75,11 +82,12 @@ test('generate website screenshots', async ({ page }) => {
     await page.waitForSelector('form[action="/settings/payer"]');
     await shot(page, 'settings.png');
 
-    // Rates: one per payer
+    // Rates: fill form for first payer, screenshot before submitting
     await page.goto(url + 'rates');
     await page.selectOption('select[name="payer_id"]', { label: 'HealthBridge' });
     await page.fill('input[name="service"]', '90837');
     await page.fill('input[name="amount"]', '$150');
+    await shot(page, 'rates-form.png');
     await page.click('form[action="/rates"] button');
     await page.waitForSelector('table');
 
@@ -103,7 +111,23 @@ test('generate website screenshots', async ({ page }) => {
     ];
 
     await page.goto(url + 'sessions');
-    for (const s of sessions) {
+
+    // Fill the first session form and screenshot before submitting
+    const first = sessions[0];
+    await page.fill('input[name="date"]', first.date);
+    await page.fill('input[name="client_id"]', first.client);
+    await page.selectOption('select[name="payer_id"]', { label: first.payer });
+    await page.fill('input[name="service"]', '90837');
+    await page.selectOption('select[name="status"]', 'completed');
+    await page.uncheck('input[name="paid"]');
+    await shot(page, 'session-form.png');
+    // Set actual paid state then submit
+    if (first.paid) await page.check('input[name="paid"]');
+    await page.click('form[action="/sessions"] button');
+    await page.waitForSelector('table');
+
+    // Add remaining sessions
+    for (const s of sessions.slice(1)) {
       await page.fill('input[name="date"]', s.date);
       await page.fill('input[name="client_id"]', s.client);
       await page.selectOption('select[name="payer_id"]', { label: s.payer });
@@ -119,10 +143,32 @@ test('generate website screenshots', async ({ page }) => {
     }
     await shot(page, 'sessions.png');
 
+    // Close-up of the sessions table (highlighting paid vs outstanding rows)
+    await page.locator('.card').last().screenshot({ path: join(SCREENSHOTS_DIR, 'sessions-table.png') });
+
     // Dashboard with data
     await page.goto(url);
     await page.waitForSelector('.cards');
     await shot(page, 'dashboard.png');
+
+    // Income breakdown: clip to the .grid2 section
+    await page.locator('.grid2').scrollIntoViewIfNeeded();
+    const grid2Box = await page.locator('.grid2').boundingBox();
+    if (grid2Box) {
+      await page.screenshot({
+        path: join(SCREENSHOTS_DIR, 'dashboard-breakdown.png'),
+        clip: {
+          x: 0,
+          y: Math.max(0, grid2Box.y - 16),
+          width: 1280,
+          height: grid2Box.height + 32,
+        },
+      });
+    }
+
+    // Navigation bar (element screenshot — shows Home, Sessions, Rates, Import,
+    // Settings, Export, Lock, and Quit)
+    await page.locator('.topbar').screenshot({ path: join(SCREENSHOTS_DIR, 'nav-bar.png') });
 
     // Import page
     await page.goto(url + 'import');
