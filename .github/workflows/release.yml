@@ -65,7 +65,8 @@ jobs:
             /tmp/icon-16.png /tmp/icon-32.png /tmp/icon-48.png \
             /tmp/icon-64.png /tmp/icon-128.png /tmp/icon-256.png
           VERSION="${GITHUB_REF_NAME#v}"
-          makensis -DAPP_VERSION="$VERSION" scripts/tallywell.nsi
+          DIST_DIR="$(pwd)/dist"
+          makensis -DAPP_VERSION="$VERSION" "-DDIST_DIR=$DIST_DIR" scripts/tallywell.nsi
 
       - name: Build Linux AppImage
         run: |

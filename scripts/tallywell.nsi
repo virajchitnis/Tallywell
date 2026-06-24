@@ -1,11 +1,19 @@
 ; Tallywell Windows installer
 ; Built with makensis (NSIS 3.x) on Linux in CI.
-; Usage: makensis -DAPP_VERSION=1.2.3 scripts/tallywell.nsi
+; Usage: makensis -DAPP_VERSION=1.2.3 -DDIST_DIR=/abs/path/to/dist scripts/tallywell.nsi
 ;
+; DIST_DIR must be an absolute path — NSIS resolves File/OutFile paths
+; relative to the script file's directory, not the caller's CWD.
 ; Installs to %LOCALAPPDATA%\Tallywell — no UAC prompt required.
 
 !ifndef APP_VERSION
   !define APP_VERSION "dev"
+!endif
+
+; DIST_DIR is passed from CI as an absolute path to the dist/ folder.
+; The fallback is only useful when running makensis from the repo root.
+!ifndef DIST_DIR
+  !define DIST_DIR "${__FILEDIR__}/../dist"
 !endif
 
 !define APP_NAME   "Tallywell"
@@ -16,7 +24,7 @@
 !define REG_UNINST "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
 
 Name              "${APP_NAME} ${APP_VERSION}"
-OutFile           "dist/Tallywell-${APP_VERSION}-Setup.exe"
+OutFile           "${DIST_DIR}/Tallywell-${APP_VERSION}-Setup.exe"
 InstallDir        "$LOCALAPPDATA\${APP_NAME}"
 InstallDirRegKey  ${REG_ROOT} "${REG_APP}" "InstallDir"
 RequestExecutionLevel user
@@ -25,8 +33,8 @@ Unicode           true
 
 !include "MUI2.nsh"
 
-!define MUI_ICON              "dist/tallywell.ico"
-!define MUI_UNICON            "dist/tallywell.ico"
+!define MUI_ICON              "${DIST_DIR}/tallywell.ico"
+!define MUI_UNICON            "${DIST_DIR}/tallywell.ico"
 !define MUI_ABORTWARNING
 
 !insertmacro MUI_PAGE_WELCOME
@@ -45,8 +53,8 @@ Unicode           true
 
 Section "Install"
   SetOutPath "$INSTDIR"
-  File "dist/${APP_EXE}"
-  File "dist/tallywell.ico"
+  File "${DIST_DIR}/${APP_EXE}"
+  File "${DIST_DIR}/tallywell.ico"
 
   ; Start Menu shortcut
   CreateDirectory "$SMPROGRAMS\${APP_NAME}"
