@@ -56,8 +56,46 @@ jobs:
           name: dist-other
           path: dist/
 
+  screenshots:
+    needs: build-other
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-other
+          path: dist/
+
+      - name: Install Linux systray runtime dependency
+        run: sudo apt-get update -q && sudo apt-get install -y libayatana-appindicator3-dev
+
+      - name: Make binary executable
+        run: chmod +x dist/tallywell-linux-amd64
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        working-directory: e2e
+        run: npm install && npx playwright install --with-deps chromium
+
+      - name: Capture screenshots
+        working-directory: e2e
+        env:
+          TALLYWELL_BIN: ${{ github.workspace }}/dist/tallywell-linux-amd64
+          TALLYWELL_NO_TRAY: '1'
+          SCREENSHOTS_DIR: ${{ github.workspace }}/site-screenshots
+        run: npx playwright test tests/screenshots.spec.ts
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: site-screenshots/
+
   publish:
-    needs: [build-mac, build-other]
+    needs: [build-mac, build-other, screenshots]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -72,14 +110,20 @@ jobs:
           name: dist-other
           path: dist/
 
+      - uses: actions/download-artifact@v4
+        with:
+          name: screenshots
+          path: site-screenshots/
+
       - name: Checksums + Pages assembly
         run: |
           ( cd dist && sha256sum tallywell-* Tallywell-*.dmg > SHA256SUMS )
-          mkdir -p _site/downloads
+          mkdir -p _site/downloads _site/screenshots
           cp -r site/* _site/ 2>/dev/null || true
           cp dist/tallywell-* dist/Tallywell-*.dmg dist/SHA256SUMS _site/downloads/
           # Stable URL for the site's download button — always points to latest.
           cp dist/Tallywell-*.dmg _site/downloads/Tallywell.dmg
+          cp site-screenshots/*.png _site/screenshots/ 2>/dev/null || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

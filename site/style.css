@@ -93,3 +93,150 @@ footer {
   font-size: 0.85rem;
   text-align: center;
 }
+
+/* ---- Site header (guide page) ---- */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.site-nav-bar {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.site-nav-bar .brand-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.site-nav-bar .brand-sm img { width: 24px; height: 24px; border-radius: 5px; }
+.site-nav-bar a { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+.site-nav-bar a.active, .site-nav-bar a:hover { color: var(--accent); }
+
+/* ---- Guide layout ---- */
+.guide-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .guide-wrap { grid-template-columns: 1fr; }
+  .guide-toc { display: none; }
+}
+.guide-toc {
+  position: sticky;
+  top: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.toc-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.guide-toc h2 {
+  font-size: 0.72rem;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.guide-toc ol { margin: 0; padding-left: 1.1rem; }
+.guide-toc li { margin: 0.3rem 0; }
+.guide-toc a { color: var(--text); text-decoration: none; }
+.guide-toc a:hover { color: var(--accent); }
+
+.guide-content h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 0.2rem; }
+.guide-content .subtitle { color: var(--muted); margin: 0 0 2rem; font-size: 1rem; }
+.guide-section { margin-bottom: 2.25rem; scroll-margin-top: 1rem; }
+.guide-section h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.85rem;
+}
+.guide-section h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 1.25rem 0 0.4rem;
+}
+.guide-section p { margin: 0.6rem 0; }
+.guide-section ol, .guide-section ul { padding-left: 1.4rem; }
+.guide-section li { margin-bottom: 0.35rem; }
+.guide-section table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 0.75rem 0; }
+.guide-section th, .guide-section td { text-align: left; padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--border); }
+.guide-section th { color: var(--muted); font-weight: 600; }
+
+/* ---- Screenshots ---- */
+.screenshot {
+  margin: 1.25rem 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.screenshot img { width: 100%; height: auto; display: block; }
+.screenshot figcaption {
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 0.4rem 0.75rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+/* ---- Tip / warning boxes ---- */
+.tip {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.6rem 0.9rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+.warn-box {
+  background: #fff8e1;
+  border-left: 3px solid #e8a800;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.6rem 0.9rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+@media (prefers-color-scheme: dark) {
+  .warn-box { background: #272010; border-color: #b88800; }
+}
+
+/* ---- Preview screenshots on main page ---- */
+.preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+@media (max-width: 580px) { .preview-grid { grid-template-columns: 1fr; } }
+.preview-img {
+  margin: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.preview-img img { width: 100%; height: auto; display: block; }
+.preview-img figcaption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.35rem 0.75rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}

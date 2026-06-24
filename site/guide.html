@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Guide — Tallywell</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-nav-bar">
+    <a href="index.html" class="brand-sm">
+      <img src="icon.svg" alt="">
+      Tallywell
+    </a>
+    <a href="index.html">Home</a>
+    <a href="guide.html" class="active">User Guide</a>
+  </div>
+</header>
+
+<div class="guide-wrap">
+
+  <aside class="guide-toc">
+    <div class="toc-inner">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#what-is-tallywell">What is Tallywell?</a></li>
+        <li><a href="#install">Installing</a></li>
+        <li><a href="#first-launch">First launch</a></li>
+        <li><a href="#unlock">Unlocking daily</a></li>
+        <li><a href="#settings">Setting up your account</a></li>
+        <li><a href="#rates">Setting rates</a></li>
+        <li><a href="#sessions">Logging sessions</a></li>
+        <li><a href="#dashboard">Reading the dashboard</a></li>
+        <li><a href="#import">Importing (coming soon)</a></li>
+        <li><a href="#export">Exporting</a></li>
+        <li><a href="#security">Locking &amp; security</a></li>
+        <li><a href="#quit">Quitting</a></li>
+        <li><a href="#backup">Backing up</a></li>
+        <li><a href="#help">Getting help</a></li>
+      </ol>
+    </div>
+  </aside>
+
+  <div class="guide-content">
+
+    <h1>Tallywell User Guide</h1>
+    <p class="subtitle">A complete guide for therapists new to the app.</p>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="what-is-tallywell">
+      <h2>1. What is Tallywell?</h2>
+      <p>Tallywell is a free app that helps therapists keep track of their income
+      and sessions. If you see clients through multiple channels — an insurance
+      platform like Alma or Headway, private-pay clients, and/or an employer —
+      Tallywell gives you one clear picture of what you've earned, what each payer
+      still owes you, and how your caseload looks across all your sources.</p>
+
+      <h3>What Tallywell is <em>not</em></h3>
+      <ul>
+        <li><strong>Not an EHR.</strong> It does not store clinical notes,
+        diagnoses, treatment plans, or any information beyond session date, client
+        initials, service code, and dollar amounts.</li>
+        <li><strong>Not a billing system.</strong> It does not submit claims to
+        insurance. Your payer platforms handle that.</li>
+        <li><strong>Not tax software.</strong> It helps you organize income for
+        your accountant, but is not a substitute for professional tax advice.</li>
+      </ul>
+
+      <h3>What makes it different</h3>
+      <p><strong>Your data never leaves your computer.</strong> There is no server,
+      no account, no cloud sync. Everything is stored locally, encrypted with your
+      passphrase. No one else — not even the developer — can access your data.</p>
+      <p><strong>Free, always.</strong> No subscription, no trial period, no
+      premium tier. Tallywell is open-source (MIT license).</p>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="install">
+      <h2>2. Installing</h2>
+
+      <h3>macOS</h3>
+      <ol>
+        <li>Go to the <a href="index.html#download">download page</a> and click
+        <strong>macOS (DMG)</strong>.</li>
+        <li>When the download finishes, open <strong>Tallywell.dmg</strong>
+        (look in your Downloads folder or your browser's download bar).</li>
+        <li>A window opens showing the Tallywell icon and your Applications folder.
+        Drag Tallywell into the Applications folder.</li>
+        <li>Eject the disk image: drag the Tallywell disk from your Desktop to the
+        Trash (the Trash icon turns into an Eject icon while dragging), or
+        right-click it and choose Eject.</li>
+        <li>Open your Applications folder and double-click Tallywell.</li>
+      </ol>
+
+      <div class="warn-box">
+        <strong>First-launch warning from macOS:</strong> You may see a message
+        saying "Tallywell cannot be opened because it is from an unidentified
+        developer." This happens because Tallywell is not yet signed with an Apple
+        certificate. It is safe to open. To do so: right-click (or Control-click)
+        the Tallywell icon in your Applications folder, choose <strong>Open</strong>,
+        then click <strong>Open</strong> again in the dialog. You only need to do
+        this once.
+      </div>
+
+      <h3>Windows</h3>
+      <ol>
+        <li>Click <strong>Windows</strong> on the download page.</li>
+        <li>When the download finishes, double-click
+        <strong>tallywell-windows-amd64.exe</strong>.</li>
+        <li>Windows SmartScreen may show a warning. Click <strong>More info</strong>
+        then <strong>Run anyway</strong>.</li>
+        <li>Tallywell opens in your default browser.</li>
+      </ol>
+
+      <h3>Linux</h3>
+      <ol>
+        <li>Click <strong>Linux</strong> on the download page.</li>
+        <li>Open a Terminal, navigate to where the file downloaded, and run:<br>
+        <code>chmod +x tallywell-linux-amd64 &amp;&amp; ./tallywell-linux-amd64</code></li>
+        <li>Tallywell opens in your default browser.</li>
+      </ol>
+
+      <div class="tip">
+        Tallywell runs as a small local server on your computer and opens in your
+        browser. The browser is just the window — no data is sent to the internet.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="first-launch">
+      <h2>3. First launch: creating your passphrase</h2>
+      <p>The very first time you open Tallywell, you'll see the setup screen.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/setup.png" alt="Tallywell setup screen asking for a new passphrase">
+        <figcaption>The setup screen appears only once — on your very first launch.</figcaption>
+      </figure>
+
+      <p>Your passphrase is the key that encrypts all your data. Tallywell has no
+      "Forgot my passphrase" option — if you lose it, your data cannot be
+      recovered. Please take a moment here:</p>
+
+      <ul>
+        <li>Choose a phrase you'll remember, but that others won't easily guess.
+        A few random words strung together work well (e.g. <em>purple-lamp-tuesday-river</em>).</li>
+        <li>Write it down in a trusted, secure place: a password manager, a
+        printed sheet kept somewhere safe, or a note in your personal vault.</li>
+        <li>Use at least 12 characters.</li>
+      </ul>
+
+      <p>Type your passphrase in the first field, type it again to confirm, then
+      click <strong>Set passphrase</strong>. You'll land on the dashboard.</p>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="unlock">
+      <h2>4. Unlocking daily</h2>
+      <p>Every time you open Tallywell after the initial setup, you'll see the
+      unlock screen instead of setup.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/unlock.png" alt="Tallywell unlock screen with a passphrase field">
+        <figcaption>Enter your passphrase to access your data.</figcaption>
+      </figure>
+
+      <p>Enter your passphrase and click <strong>Unlock</strong>. If you type the
+      wrong passphrase, you'll see "Incorrect passphrase." — check that Caps Lock
+      is off and try again.</p>
+
+      <h3>Auto-lock</h3>
+      <p>For security, Tallywell automatically locks after <strong>15 minutes of
+      inactivity</strong>, even if the browser tab stays open. When that happens,
+      you'll be taken back to the unlock screen. This protects client data if you
+      step away from your computer.</p>
+      <p>You can also lock the app at any time by clicking the <strong>Lock</strong>
+      button in the navigation bar at the top of any page.</p>
+
+      <div class="warn-box">
+        <strong>Forgotten passphrase:</strong> There is no recovery option — this
+        is by design. The passphrase is the encryption key; without it the data
+        cannot be decrypted. Keeping a copy in a password manager or other safe
+        location is strongly recommended.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="settings">
+      <h2>5. Setting up your account</h2>
+      <p>Before you can log sessions, tell Tallywell about the practices you work
+      in and the payers who pay you. Click <strong>Settings</strong> in the top
+      navigation bar.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/settings.png" alt="Settings page showing a practice and two payers configured">
+        <figcaption>Settings — configure your practices and payers once, then log sessions freely.</figcaption>
+      </figure>
+
+      <h3>Adding a practice</h3>
+      <p>A "practice" represents a context you work in. Most therapists have one
+      practice (their own private practice) or two (their own practice plus an
+      employer). The distinction matters at tax time: Tallywell keeps W-2 employer
+      income separate from self-employment income.</p>
+      <ol>
+        <li>Under <strong>Practices</strong>, type the name of your practice
+        (e.g. "My Practice" or your actual practice name).</li>
+        <li>Choose the type: <strong>My own practice</strong> if you're
+        self-employed here, or <strong>An employer</strong> if this is a W-2 job.</li>
+        <li>Click <strong>Add practice</strong>.</li>
+      </ol>
+      <p>If you have both your own practice and an employer, add both separately.</p>
+
+      <h3>Adding payers</h3>
+      <p>A "payer" is anyone who pays you for sessions: an insurance platform,
+      private-pay clients, or an employer. Add one payer for each distinct source
+      of income.</p>
+      <ol>
+        <li>Under <strong>Payers</strong>, type the name of the payer
+        (e.g. "Alma", "Headway", "Private Pay").</li>
+        <li>Choose which practice this payer is associated with.</li>
+        <li>Choose the type:
+          <ul>
+            <li><strong>Insurance platform</strong> — Alma, Headway, Grow Therapy, Rula, etc.</li>
+            <li><strong>Private pay</strong> — clients who pay you directly.</li>
+            <li><strong>Employer</strong> — a group practice, agency, or other W-2 employer.</li>
+          </ul>
+        </li>
+        <li>Leave the <strong>Importer</strong> field blank for now
+        (used for CSV import, which is coming soon).</li>
+        <li>Click <strong>Add payer</strong>.</li>
+      </ol>
+
+      <div class="tip">
+        Example setup for a therapist with two platforms and private pay: add
+        "Alma" (Insurance platform), "Headway" (Insurance platform), and
+        "Private Pay" (Private pay) — three payers total.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="rates">
+      <h2>6. Setting rates</h2>
+      <p>Click <strong>Rates</strong> in the navigation bar. Rates tell Tallywell
+      how much each payer pays per session type, so expected amounts fill in
+      automatically when you log a session.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/rates.png" alt="Rates page showing two rates configured for two payers">
+        <figcaption>Rates — set once per payer, auto-filled when you log sessions.</figcaption>
+      </figure>
+
+      <ol>
+        <li>Choose a payer from the dropdown.</li>
+        <li>Enter a <strong>service code</strong> (e.g. <code>90837</code>). If
+        you always charge the same rate for every session type with this payer,
+        leave it blank to set a default rate.</li>
+        <li>Enter the <strong>amount</strong> (e.g. <code>$150</code> or
+        <code>150</code>).</li>
+        <li>Click <strong>Add</strong>.</li>
+      </ol>
+
+      <p>Repeat for each payer. If a payer pays different amounts for different
+      session lengths, add a separate rate for each service code.</p>
+
+      <h3>Common therapy service codes</h3>
+      <table>
+        <thead><tr><th>Code</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>90837</code></td><td>Individual therapy, 53+ minutes</td></tr>
+          <tr><td><code>90834</code></td><td>Individual therapy, 38–52 minutes</td></tr>
+          <tr><td><code>90832</code></td><td>Individual therapy, 16–37 minutes</td></tr>
+          <tr><td><code>90847</code></td><td>Family/couples therapy with patient, 50+ minutes</td></tr>
+          <tr><td><code>90846</code></td><td>Family therapy without patient</td></tr>
+          <tr><td><code>90853</code></td><td>Group therapy</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="sessions">
+      <h2>7. Logging sessions</h2>
+      <p>Click <strong>Sessions</strong> in the navigation bar. Use the form at
+      the top to log each session as it happens — or in advance for scheduled
+      appointments.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/sessions.png" alt="Sessions page showing the add-session form and a list of past sessions with payment status">
+        <figcaption>Sessions — log each appointment and track payment status over time.</figcaption>
+      </figure>
+
+      <h3>The session form fields</h3>
+      <ul>
+        <li><strong>Date</strong> — the date the session took place (or is
+        scheduled to take place).</li>
+        <li><strong>Client</strong> — the client's initials or an ID you use to
+        identify them (e.g. "AB" or "C-042"). Never enter a full name.</li>
+        <li><strong>Payer</strong> — which payer bills this session.</li>
+        <li><strong>Service</strong> — the CPT code (e.g. <code>90837</code>).
+        If you've set a rate for this payer and service, the Expected amount fills
+        in automatically.</li>
+        <li><strong>Status</strong> — choose one:
+          <ul>
+            <li><em>Completed</em> — the session happened.</li>
+            <li><em>Scheduled</em> — the session is upcoming.</li>
+            <li><em>No-show</em> — the client didn't attend.</li>
+            <li><em>Cancelled</em> — the session was cancelled.</li>
+          </ul>
+        </li>
+        <li><strong>Expected</strong> — what you expect to be paid. Auto-filled
+        from your rate; you can override it if needed.</li>
+        <li><strong>Paid</strong> — check this box when the payer has actually
+        sent payment for this session.</li>
+      </ul>
+
+      <p>Click <strong>Add</strong> to save. The session appears in the list below
+      the form.</p>
+
+      <div class="tip">
+        <strong>Workflow tip:</strong> Don't wait until a session is paid before
+        logging it. Log it on the day it happens with Status: Completed, then
+        check the Paid box when the money arrives — often 2–6 weeks later for
+        insurance platforms. The dashboard shows what's still outstanding so you
+        always know what you're waiting on.
+      </div>
+
+      <h3>Reading the sessions list</h3>
+      <p>Completed sessions that haven't been marked paid are highlighted so they
+      stand out. The list shows date, client, payer, service, status, expected
+      amount, amount paid, and date paid. Scroll down to see older sessions.</p>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="dashboard">
+      <h2>8. Reading the dashboard</h2>
+      <p>Click <strong>Home</strong> in the navigation bar (or just open the app)
+      to see your dashboard. It gives a real-time summary of your income across
+      all payers.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/dashboard.png" alt="Tallywell dashboard showing earned, outstanding, session count, and income by payer">
+        <figcaption>Dashboard — everything you need to know about your income at a glance.</figcaption>
+      </figure>
+
+      <h3>The metric cards</h3>
+      <ul>
+        <li><strong>Earned</strong> — total expected income from all completed
+        sessions. This is what you've worked for.</li>
+        <li><strong>Still owed to you</strong> — earned income that hasn't been
+        paid yet. The number you're waiting on.</li>
+        <li><strong>Sessions</strong> — total number of sessions logged.</li>
+        <li><strong>Paid so far</strong> — income you've actually received.</li>
+      </ul>
+
+      <h3>Income by source</h3>
+      <p>A table breaking down each payer: how many sessions, how much earned,
+      and how much is still outstanding. This helps you quickly see if a
+      particular platform is slow to pay.</p>
+
+      <h3>Employer vs own practice</h3>
+      <p>If you have both an employer and your own practice, this section separates
+      the income. This is the number you'll hand to your accountant at tax time:
+      employer income is W-2, own-practice income is self-employment.</p>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="import">
+      <h2>9. Importing from payer platforms (coming soon)</h2>
+      <p>The Import page will let you upload CSV export files from platforms like
+      Alma, Headway, and SimplePractice. Tallywell will automatically match the
+      payouts to the sessions you've logged and mark sessions as paid.</p>
+
+      <figure class="screenshot">
+        <img src="screenshots/import.png" alt="Import page showing coming soon message">
+        <figcaption>CSV import is in development — for now, mark sessions paid manually.</figcaption>
+      </figure>
+
+      <p>Until this feature is available, mark sessions as paid by hand:</p>
+      <ol>
+        <li>When a platform pays you, check your platform's payment summary to see
+        which sessions are included.</li>
+        <li>Go to <strong>Sessions</strong> and find those sessions in the list.
+        Re-add them with the <strong>Paid</strong> checkbox checked, or note the
+        date paid.</li>
+      </ol>
+      <p>Once CSV import is available, this will be much faster — you'll just
+      upload the file and let Tallywell do the matching.</p>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="export">
+      <h2>10. Exporting for your accountant</h2>
+      <p>Click <strong>Export</strong> in the top navigation bar at any time to
+      download a spreadsheet of all your data.</p>
+      <p>The spreadsheet opens in Numbers (Mac), Microsoft Excel, or Google Sheets.
+      It includes:</p>
+      <ul>
+        <li>A complete list of all sessions with amounts and payment status.</li>
+        <li>Income totals by payer and by month.</li>
+        <li>A summary separating employer (W-2) income from self-employment income —
+        useful for your accountant at tax time.</li>
+        <li>Any sessions that couldn't be matched (for review).</li>
+      </ul>
+      <p>There is no need to coordinate with Tallywell when sharing this file —
+      just email the spreadsheet to your accountant as you would any other
+      attachment.</p>
+
+      <div class="tip">
+        Export as often as you like. Each export reflects your current data;
+        nothing is deleted or changed by exporting.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="security">
+      <h2>11. Locking and security</h2>
+      <p>Tallywell protects your data with a passphrase that encrypts everything
+      stored on disk. Even if someone copies your data file, they cannot read it
+      without your passphrase.</p>
+
+      <h3>Locking manually</h3>
+      <p>Click the <strong>Lock</strong> button in the top navigation bar whenever
+      you step away from your computer. The app immediately returns to the unlock
+      screen and clears your data from memory.</p>
+
+      <h3>Auto-lock</h3>
+      <p>The app locks automatically after 15 minutes of inactivity, even if the
+      browser tab is open. This meets HIPAA's automatic logoff requirement. When
+      you return, enter your passphrase to continue where you left off.</p>
+
+      <h3>Tips for keeping data secure</h3>
+      <ul>
+        <li><strong>Enable FileVault</strong> on your Mac (System Settings →
+        Privacy &amp; Security → FileVault). This encrypts your entire drive and
+        adds another layer of protection if your computer is stolen.</li>
+        <li><strong>Use a strong passphrase</strong> and store it in a password
+        manager (1Password, Bitwarden, Apple's built-in Keychain, etc.).</li>
+        <li><strong>Don't share your passphrase.</strong> Anyone with it can
+        access all your data.</li>
+        <li><strong>Lock when away.</strong> Get in the habit of clicking Lock
+        before stepping out of your office, even briefly.</li>
+      </ul>
+
+      <div class="tip">
+        Tallywell is designed for HIPAA-conscious use. Whether your specific use
+        meets HIPAA requirements depends on your full set of practices — Tallywell
+        is a tool, not a guarantee. Consult your compliance officer or attorney
+        if you have questions.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="quit">
+      <h2>12. Quitting Tallywell</h2>
+      <p>Click <strong>Quit</strong> in the top navigation bar (next to the Lock
+      button). This shuts down the Tallywell server cleanly and stops the app.</p>
+      <p>All your data is saved automatically every time you make a change. There
+      is no Save button — if you see data on screen, it's already saved.</p>
+
+      <div class="warn-box">
+        <strong>Don't just close the browser tab.</strong> Closing the tab hides
+        the window but leaves the Tallywell server running in the background.
+        Always use the <strong>Quit</strong> button to fully stop the app.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="backup">
+      <h2>13. Backing up your data</h2>
+      <p>Your Tallywell data lives in a single encrypted file on your computer.
+      Backing it up is just copying that file somewhere safe.</p>
+
+      <h3>Where the data file is</h3>
+      <ul>
+        <li><strong>macOS:</strong> <code>~/Library/Application Support/Tallywell/tracker.db.enc</code></li>
+        <li><strong>Windows:</strong> <code>%APPDATA%\Tallywell\tracker.db.enc</code></li>
+        <li><strong>Linux:</strong> <code>~/.local/share/Tallywell/tracker.db.enc</code></li>
+      </ul>
+
+      <h3>How to back up (macOS)</h3>
+      <ol>
+        <li>In Finder, open the menu bar and choose <strong>Go → Go to Folder</strong>.</li>
+        <li>Type <code>~/Library/Application Support/Tallywell/</code> and press Return.</li>
+        <li>Copy <code>tracker.db.enc</code> to an external drive, USB stick, or
+        iCloud Drive. The file is already encrypted with your passphrase, so it's
+        safe to store in the cloud.</li>
+      </ol>
+
+      <h3>Restoring from backup</h3>
+      <ol>
+        <li>Install Tallywell on the new computer.</li>
+        <li>On first launch, create a passphrase — use the exact same passphrase
+        as the original installation.</li>
+        <li>Copy your backup <code>tracker.db.enc</code> file to the data folder
+        (same path as above).</li>
+        <li>Relaunch Tallywell and unlock with your passphrase. All your data
+        will be there.</li>
+      </ol>
+
+      <div class="tip">
+        Back up after any major data entry session — after logging a week's
+        sessions, for example. Keeping a dated copy in iCloud Drive or on an
+        external drive gives you a recovery point if your computer is lost or damaged.
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="guide-section" id="help">
+      <h2>14. Getting help</h2>
+      <p>If something isn't working as expected, you can report it on
+      <a href="https://github.com/virajchitnis/Tallywell/issues">GitHub Issues</a>.
+      You'll need a free GitHub account to submit a new report.</p>
+
+      <p>When reporting a problem, it helps to include:</p>
+      <ul>
+        <li>What you were trying to do.</li>
+        <li>What happened instead.</li>
+        <li>Your operating system (macOS version, Windows version, etc.).</li>
+        <li>The Tallywell version (visible in the GitHub release notes).</li>
+      </ul>
+
+      <p>You can also
+      <a href="https://github.com/virajchitnis/Tallywell">view the source code</a>
+      on GitHub. Contributions — especially CSV importers for additional payer
+      platforms — are very welcome.</p>
+    </section>
+
+  </div><!-- /guide-content -->
+</div><!-- /guide-wrap -->
+
+<footer>
+  <p>Tallywell is not an EHR, and not tax or legal advice. It is designed for
+  HIPAA-conscious, local-first use; security depends on your own device and
+  practices.</p>
+  <p>© 2026 <a href="https://github.com/virajchitnis">Viraj Chitnis</a> · MIT License</p>
+</footer>
+
+</body>
+</html>
