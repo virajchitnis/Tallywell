@@ -25,6 +25,10 @@ import (
 	"github.com/tallywell/tallywell/internal/server"
 )
 
+// version is set at build time via -ldflags "-X main.version=vX.Y.Z".
+// Falls back to "dev" for local runs.
+var version = "dev"
+
 func main() {
 	dir, err := dataDir()
 	if err != nil {
@@ -34,7 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("tallywell: init: %v", err)
 	}
-	srv, err := server.New(a, server.DefaultAutoLock)
+	srv, err := server.New(a, server.DefaultAutoLock, version)
 	if err != nil {
 		log.Fatalf("tallywell: server: %v", err)
 	}

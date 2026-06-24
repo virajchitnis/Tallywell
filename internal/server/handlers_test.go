@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -72,7 +74,7 @@ func TestUnlockFormTimeoutFlash(t *testing.T) {
 
 func TestSetQuitFunc(t *testing.T) {
 	a, _ := app.New(t.TempDir())
-	srv, _ := New(a, time.Hour)
+	srv, _ := New(a, time.Hour, "dev")
 	called := false
 	srv.SetQuitFunc(func() { called = true })
 	if srv.quit == nil {
@@ -307,6 +309,60 @@ func TestResetCorrectConfirmationWipesDataAndRedirectsToSetup(t *testing.T) {
 	// Session is cleared — guarded routes redirect to unlock/setup.
 	if got := body(t, e.get(t, "/")); strings.Contains(got, "Here's where things stand") {
 		t.Error("dashboard accessible after reset — session should have been cleared")
+	}
+}
+
+// --- update check ---
+
+func TestSemverLess(t *testing.T) {
+	cases := []struct {
+		a, b string
+		want bool
+	}{
+		{"v0.1.0", "v0.1.1", true},
+		{"v0.1.1", "v0.1.0", false},
+		{"v0.1.0", "v0.1.0", false},
+		{"v0.9.0", "v0.10.0", true},
+		{"v1.0.0", "v0.9.9", false},
+		{"dev", "v0.1.0", true},
+		{"v0.1.0", "dev", false},
+	}
+	for _, c := range cases {
+		if got := semverLess(c.a, c.b); got != c.want {
+			t.Errorf("semverLess(%q, %q) = %v, want %v", c.a, c.b, got, c.want)
+		}
+	}
+}
+
+func TestCheckUpdateCurrent(t *testing.T) {
+	e := unlocked(t)
+	e.srv.version = "v1.0.0"
+	e.srv.updateChecker = func(_ context.Context, _ string) (string, error) { return "v1.0.0", nil }
+	resp := e.post(t, "/settings/check-update", nil)
+	if !strings.Contains(resp.Request.URL.RawQuery, "update=current") {
+		t.Errorf("expected update=current in redirect, got %s", resp.Request.URL.RawQuery)
+	}
+}
+
+func TestCheckUpdateAvailable(t *testing.T) {
+	e := unlocked(t)
+	e.srv.version = "v0.1.0"
+	e.srv.updateChecker = func(_ context.Context, _ string) (string, error) { return "v0.2.0", nil }
+	resp := e.post(t, "/settings/check-update", nil)
+	q := resp.Request.URL.RawQuery
+	if !strings.Contains(q, "update=available") || !strings.Contains(q, "latest=v0.2.0") {
+		t.Errorf("expected update=available&latest=v0.2.0 in redirect, got %s", q)
+	}
+}
+
+func TestCheckUpdateError(t *testing.T) {
+	e := unlocked(t)
+	e.srv.updateChecker = func(_ context.Context, _ string) (string, error) {
+		return "", errors.New("network failure")
+	}
+	resp := e.post(t, "/settings/check-update", nil)
+	if !strings.Contains(resp.Request.URL.RawQuery, "update=error") {
+		t.Errorf("expected update=error in redirect, got %s", resp.Request.URL.RawQuery)
 	}
 }
 

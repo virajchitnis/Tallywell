@@ -1,10 +1,16 @@
 package server
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"runtime"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/tallywell/tallywell/internal/app"
@@ -245,10 +251,13 @@ func (s *Server) handleAddRate(w http.ResponseWriter, r *http.Request) {
 // --- settings (practices & payers) ---
 
 type settingsView struct {
-	Practices    []model.Practice
-	Payers       []model.Payer
-	PracticeName map[string]string
-	HasKeychain  bool
+	Practices     []model.Practice
+	Payers        []model.Payer
+	PracticeName  map[string]string
+	HasKeychain   bool
+	Version       string
+	UpdateResult  string // "current" | "available" | "error" | ""
+	LatestVersion string // set when UpdateResult == "available"
 }
 
 func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
@@ -270,9 +279,14 @@ func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
 	case "err":
 		flash = "Could not update auto-unlock — is your system keychain accessible?"
 	}
+	updateResult := r.URL.Query().Get("update")
+	latestVersion := r.URL.Query().Get("latest")
 	s.render(w, "settings.html", pageData{Active: "settings", Flash: flash, Content: settingsView{
 		Practices: practices, Payers: payers, PracticeName: names,
-		HasKeychain: s.app.HasKeychainKey(),
+		HasKeychain:   s.app.HasKeychainKey(),
+		Version:       s.version,
+		UpdateResult:  updateResult,
+		LatestVersion: latestVersion,
 	}})
 }
 
@@ -368,6 +382,73 @@ func (s *Server) handleReset(w http.ResponseWriter, r *http.Request) {
 	_ = s.app.Reset()
 	s.clearSession()
 	http.Redirect(w, r, "/setup", http.StatusSeeOther)
+}
+
+// --- update check ---
+
+func (s *Server) handleCheckUpdate(w http.ResponseWriter, r *http.Request) {
+	latest, err := s.updateChecker(r.Context(), s.version)
+	if err != nil {
+		http.Redirect(w, r, "/settings?update=error", http.StatusSeeOther)
+		return
+	}
+	if semverLess(s.version, latest) {
+		http.Redirect(w, r, "/settings?update=available&latest="+url.QueryEscape(latest), http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, "/settings?update=current", http.StatusSeeOther)
+}
+
+// fetchLatestRelease queries the GitHub releases API and returns the latest tag name.
+func fetchLatestRelease(ctx context.Context, currentVersion string) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, "GET",
+		"https://api.github.com/repos/virajchitnis/Tallywell/releases/latest", nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", "Tallywell/"+currentVersion)
+	req.Header.Set("Accept", "application/vnd.github+json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	var payload struct {
+		TagName string `json:"tag_name"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
+		return "", err
+	}
+	if payload.TagName == "" {
+		return "", errors.New("empty tag_name in GitHub response")
+	}
+	return payload.TagName, nil
+}
+
+// semverLess reports whether version a is strictly less than b.
+// Both are expected in "vMAJOR.MINOR.PATCH" form; non-numeric parts are treated as 0.
+func semverLess(a, b string) bool {
+	parse := func(s string) [3]int {
+		s = strings.TrimPrefix(s, "v")
+		parts := strings.SplitN(s, ".", 3)
+		var n [3]int
+		for i, p := range parts {
+			if i >= 3 {
+				break
+			}
+			n[i], _ = strconv.Atoi(p)
+		}
+		return n
+	}
+	an, bn := parse(a), parse(b)
+	for i := range an {
+		if an[i] != bn[i] {
+			return an[i] < bn[i]
+		}
+	}
+	return false
 }
 
 // --- import (Phase 2 placeholder) / export ---

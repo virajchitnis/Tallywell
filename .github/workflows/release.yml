@@ -56,8 +56,9 @@ jobs:
       - name: Build Windows and Linux binaries
         run: |
           mkdir -p dist
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/tallywell-windows-amd64.exe .
-          GOOS=linux GOARCH=amd64 go build -o dist/tallywell-linux-amd64 .
+          LDFLAGS="-X main.version=${GITHUB_REF_NAME}"
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "${LDFLAGS}" -o dist/tallywell-windows-amd64.exe .
+          GOOS=linux GOARCH=amd64 go build -ldflags "${LDFLAGS}" -o dist/tallywell-linux-amd64 .
 
       - name: Generate app icon
         run: go run scripts/gen-icon.go

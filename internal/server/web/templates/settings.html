@@ -76,6 +76,26 @@ is pre-filled — this is your own configuration.</p>
   {{end}}
 </section>
 
+<section class="card">
+  <h2>About</h2>
+  <p>
+    <strong>Tallywell</strong> {{.Content.Version}} &nbsp;·&nbsp;
+    <a href="https://github.com/virajchitnis/Tallywell" target="_blank" rel="noopener">Source on GitHub</a>
+    &nbsp;·&nbsp; MIT License
+  </p>
+  {{if eq .Content.UpdateResult "current"}}
+  <p class="flash-ok">You are running the latest version.</p>
+  {{else if eq .Content.UpdateResult "available"}}
+  <p class="flash-warn">A new version is available: <strong>{{.Content.LatestVersion}}</strong> &mdash;
+    <a href="https://github.com/virajchitnis/Tallywell/releases/latest" target="_blank" rel="noopener">download on GitHub</a>.</p>
+  {{else if eq .Content.UpdateResult "error"}}
+  <p class="flash">Could not check for updates — check your internet connection and try again.</p>
+  {{end}}
+  <form method="post" action="/settings/check-update">
+    <button type="submit" class="secondary">Check for updates</button>
+  </form>
+</section>
+
 <section class="card danger-zone">
   <h2>Danger zone</h2>
   <p class="muted">Permanent actions that cannot be undone.</p>

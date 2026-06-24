@@ -28,7 +28,7 @@ func newTestEnv(t *testing.T) *testEnv {
 	if err != nil {
 		t.Fatal(err)
 	}
-	srv, err := New(a, time.Hour)
+	srv, err := New(a, time.Hour, "dev")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -183,7 +183,7 @@ func TestLockBlocksAccess(t *testing.T) {
 
 func TestAutoLock(t *testing.T) {
 	a, _ := app.New(t.TempDir())
-	srv, _ := New(a, time.Hour)
+	srv, _ := New(a, time.Hour, "dev")
 	// Force a tiny auto-lock window and a controllable clock.
 	srv.autoLock = 1 * time.Millisecond
 	ts := httptest.NewServer(srv.Handler())

@@ -4,6 +4,7 @@
 package server
 
 import (
+	"context"
 	"crypto/rand"
 	"embed"
 	"encoding/hex"
@@ -32,6 +33,10 @@ type Server struct {
 	autoLock time.Duration
 	now      func() time.Time
 	quit     func() // called when the user clicks Quit in the web UI
+	version  string
+
+	// updateChecker is injectable so tests can stub out the network call.
+	updateChecker func(ctx context.Context, currentVersion string) (string, error)
 
 	mu         sync.Mutex
 	sessionID  string
@@ -44,7 +49,7 @@ type Server struct {
 func (s *Server) SetQuitFunc(f func()) { s.quit = f }
 
 // New builds a Server over the given app core.
-func New(a *app.App, autoLock time.Duration) (*Server, error) {
+func New(a *app.App, autoLock time.Duration, version string) (*Server, error) {
 	if autoLock <= 0 {
 		autoLock = DefaultAutoLock
 	}
@@ -53,10 +58,12 @@ func New(a *app.App, autoLock time.Duration) (*Server, error) {
 		return nil, err
 	}
 	s := &Server{
-		app:      a,
-		tmpl:     tmpl,
-		autoLock: autoLock,
-		now:      time.Now,
+		app:           a,
+		tmpl:          tmpl,
+		autoLock:      autoLock,
+		now:           time.Now,
+		version:       version,
+		updateChecker: fetchLatestRelease,
 	}
 	s.routes()
 	return s, nil
@@ -88,6 +95,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /settings/practice", s.guard(s.handleAddPractice))
 	s.mux.HandleFunc("POST /settings/payer", s.guard(s.handleAddPayer))
 	s.mux.HandleFunc("POST /settings/keychain", s.guard(s.handleToggleKeychain))
+	s.mux.HandleFunc("POST /settings/check-update", s.guard(s.handleCheckUpdate))
 	s.mux.HandleFunc("GET /import", s.guard(s.handleImport))
 	s.mux.HandleFunc("GET /export", s.guard(s.handleExport))
 	s.mux.HandleFunc("GET /reset", s.guard(s.handleResetForm))
