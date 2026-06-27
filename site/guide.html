@@ -101,17 +101,30 @@
       </ol>
 
       <div class="warn-box">
-        <strong>First-launch warning from macOS (Gatekeeper):</strong> You may see
-        a dialog saying <em>"Tallywell" Not Opened</em>. This happens because
-        Tallywell is not yet notarized with Apple — it is safe to open.
-        <ol style="margin: 0.5rem 0 0 1.2rem; padding: 0;">
+        <strong>First-launch warning from macOS (Gatekeeper):</strong> Tallywell
+        is not yet notarized with Apple, so macOS will block it the first time.
+        It is safe to open. The steps depend on your macOS version:
+
+        <p style="margin: 0.75rem 0 0.25rem"><strong>macOS Sonoma 14 or Sequoia 15</strong> — you'll see <em>"Tallywell" Not Opened</em>:</p>
+        <ol style="margin: 0 0 0 1.2rem; padding: 0;">
           <li>Click <strong>Done</strong> (do <em>not</em> click Move to Trash).</li>
           <li>Open <strong>System Settings → Privacy &amp; Security</strong>.</li>
-          <li>Scroll down to the section that says <em>"Tallywell" was blocked</em>.</li>
+          <li>Scroll down to find <em>"Tallywell" was blocked</em>.</li>
           <li>Click <strong>Open Anyway</strong> and enter your Mac password.</li>
         </ol>
-        You only need to do this once. On older macOS (Ventura and earlier) you
-        can also right-click the app in Finder and choose <strong>Open</strong>.
+
+        <p style="margin: 0.75rem 0 0.25rem"><strong>macOS Tahoe 26</strong> — you may see <em>"Tallywell" is Damaged</em> instead. Try the Privacy &amp; Security route above first. If <em>Open Anyway</em> does not appear, open <strong>Terminal</strong> and run:</p>
+        <pre style="margin: 0.25rem 0 0.5rem; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.15); border-radius: 4px; font-size: 0.85em; overflow-x: auto;">xattr -r -d com.apple.quarantine /Applications/Tallywell.app</pre>
+        Then double-click the app again.
+
+        <p style="margin: 0.75rem 0 0.25rem"><strong>macOS Ventura 13 and earlier</strong>:</p>
+        <ol style="margin: 0 0 0 1.2rem; padding: 0;">
+          <li>Right-click (or Control-click) Tallywell in your Applications folder.</li>
+          <li>Choose <strong>Open</strong> from the menu.</li>
+          <li>Click <strong>Open</strong> again in the dialog that appears.</li>
+        </ol>
+
+        You only need to do this once.
       </div>
 
       <h3>Windows</h3>
