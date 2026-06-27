@@ -101,13 +101,17 @@
       </ol>
 
       <div class="warn-box">
-        <strong>First-launch warning from macOS:</strong> You may see a message
-        saying "Tallywell cannot be opened because it is from an unidentified
-        developer." This happens because Tallywell is not yet signed with an Apple
-        certificate. It is safe to open. To do so: right-click (or Control-click)
-        the Tallywell icon in your Applications folder, choose <strong>Open</strong>,
-        then click <strong>Open</strong> again in the dialog. You only need to do
-        this once.
+        <strong>First-launch warning from macOS (Gatekeeper):</strong> You may see
+        a dialog saying <em>"Tallywell" Not Opened</em>. This happens because
+        Tallywell is not yet notarized with Apple — it is safe to open.
+        <ol style="margin: 0.5rem 0 0 1.2rem; padding: 0;">
+          <li>Click <strong>Done</strong> (do <em>not</em> click Move to Trash).</li>
+          <li>Open <strong>System Settings → Privacy &amp; Security</strong>.</li>
+          <li>Scroll down to the section that says <em>"Tallywell" was blocked</em>.</li>
+          <li>Click <strong>Open Anyway</strong> and enter your Mac password.</li>
+        </ol>
+        You only need to do this once. On older macOS (Ventura and earlier) you
+        can also right-click the app in Finder and choose <strong>Open</strong>.
       </div>
 
       <h3>Windows</h3>
